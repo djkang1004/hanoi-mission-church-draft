@@ -10,7 +10,7 @@
 - 실제 예배 시간표
 - YouTube 새 영상 자동 업데이트 미디어 허브
 - 유튜브 추천 설교 3편 연결
-- Instagram·TikTok·Zalo 연결 준비 카드
+- 목사님 Instagram 계정 연결, TikTok·Zalo 연결 준비 카드
 - 다음세대·찬양·공동체 소개
 - 새가족 및 하노이 방문 안내
 - 선교와 나눔 소개
@@ -23,6 +23,7 @@
 - 하노이선교교회 YouTube 채널
 - Google Maps 교회 정보
 - 카카오톡 받은 파일 내 디아코니아 중창단 사진
+- 소개 섹션 참고 사진: [Caleb Oquendo / Pexels](https://www.pexels.com/photo/worship-service-with-congregation-in-church-36425622/), [Pexels License](https://www.pexels.com/license/)에 따라 사용. 실제 하노이 선교교회 현장 사진이 아닌 예배 분위기 참고 사진
 
 ## 게시 전 확인 권장사항
 1. 베트남어 번역을 베트남 성도 또는 전문 번역자가 최종 감수
@@ -31,6 +32,6 @@
 4. 교회 로고 원본 파일로 현재 임시 심벌 교체
 5. 공지사항과 주보를 누가 어떤 방식으로 갱신할지 결정
 6. 교회 명의로 최종 검토 후 공개
-7. 공식 Instagram·TikTok·Zalo 계정 개설 후 주소 연결
+7. TikTok·Zalo 공식 계정 개설 후 주소 연결
 
 자세한 관리 방법은 `SNS-운영안내.md`를 참고하세요.
