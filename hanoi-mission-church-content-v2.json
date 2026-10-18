@@ -1,0 +1,180 @@
+{
+  "version": "v2",
+  "updated": "2026-10-18",
+  "church": {
+    "nameKo": "하노이 선교교회",
+    "nameVi": "Hội Thánh Truyền Giáo Hà Nội",
+    "taglineKo": "예수와 함께! 복음과 함께!",
+    "taglineVi": "Cùng Chúa Giê-su! Cùng Phúc Âm!",
+    "address": "SH2-09, The Matrix One, Lê Quang Đạo, Từ Liêm, Hà Nội",
+    "phone": "+84 971 012 146",
+    "email": "dangian65@gmail.com",
+    "map": "https://maps.app.goo.gl/Uk4oDcCqqqgz59dm9",
+    "youtube": "https://www.youtube.com/@%ED%95%98%EB%85%B8%EC%9D%B4%EC%84%A0%EA%B5%90%EA%B5%90%ED%9A%8C",
+    "youtubePlaylist": "https://www.youtube.com/embed/videoseries?list=UUZPFouw18_KJ_eyDzJdMCjg",
+    "instagram": "https://www.instagram.com/dangian65"
+  },
+  "worship": [
+    {
+      "key": "sunday",
+      "timeKo": "주일 오전 10:30",
+      "timeVi": "Chủ Nhật 10:30",
+      "locationKo": "2층 본당",
+      "locationVi": "Hội trường tầng 2"
+    },
+    {
+      "key": "wednesday",
+      "timeKo": "수요일 오전 10:30",
+      "timeVi": "Thứ Tư 10:30",
+      "locationKo": "3층 예배실",
+      "locationVi": "Phòng thờ phượng tầng 3"
+    },
+    {
+      "key": "friday",
+      "timeKo": "금요일 오후 7:30",
+      "timeVi": "Thứ Sáu 19:30",
+      "locationKo": "2층 본당",
+      "locationVi": "Hội trường tầng 2"
+    },
+    {
+      "key": "dawn",
+      "timeKo": "월~금 오전 5:30",
+      "timeVi": "Thứ Hai–Sáu 05:30",
+      "locationKo": "3층 예배실",
+      "locationVi": "Phòng thờ phượng tầng 3"
+    }
+  ],
+  "bulletins": [
+    {
+      "date": "2026-10-18",
+      "category": "bulletins",
+      "titleKo": "2026-10-18 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 18/10/2026",
+      "file": "assets/bulletins/2026-10-18.pdf"
+    },
+    {
+      "date": "2026-10-11",
+      "category": "bulletins",
+      "titleKo": "2026-10-11 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 11/10/2026",
+      "file": "assets/bulletins/2026-10-11.pdf"
+    },
+    {
+      "date": "2026-09-27",
+      "category": "bulletins",
+      "titleKo": "2026-09-27 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 27/09/2026",
+      "file": "assets/bulletins/2026-09-27.pdf"
+    },
+    {
+      "date": "2026-08-30",
+      "category": "bulletins",
+      "titleKo": "2026-08-30 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 30/08/2026",
+      "file": "assets/bulletins/2026-08-30.pdf"
+    },
+    {
+      "date": "2026-08-23",
+      "category": "bulletins",
+      "titleKo": "2026-08-23 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 23/08/2026",
+      "file": "assets/bulletins/2026-08-23.pdf"
+    },
+    {
+      "date": "2026-08-16",
+      "category": "bulletins",
+      "titleKo": "2026-08-16 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 16/08/2026",
+      "file": "assets/bulletins/2026-08-16.pdf"
+    },
+    {
+      "date": "2026-08-09",
+      "category": "bulletins",
+      "titleKo": "2026-08-09 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 09/08/2026",
+      "file": "assets/bulletins/2026-08-09.pdf"
+    },
+    {
+      "date": "2026-08-02",
+      "category": "bulletins",
+      "titleKo": "2026-08-02 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 02/08/2026",
+      "file": "assets/bulletins/2026-08-02.pdf"
+    },
+    {
+      "date": "2026-07-26",
+      "category": "bulletins",
+      "titleKo": "2026-07-26 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 26/07/2026",
+      "file": "assets/bulletins/2026-07-26.pdf"
+    },
+    {
+      "date": "2026-07-12",
+      "category": "bulletins",
+      "titleKo": "2026-07-12 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 12/07/2026",
+      "file": "assets/bulletins/2026-07-12.pdf"
+    },
+    {
+      "date": "2026-07-05",
+      "category": "bulletins",
+      "titleKo": "2026-07-05 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 05/07/2026",
+      "file": "assets/bulletins/2026-07-05.pdf"
+    },
+    {
+      "date": "2026-06-14",
+      "category": "bulletins",
+      "titleKo": "2026-06-14 주일 주보",
+      "titleVi": "Bản tin Chúa Nhật 14/06/2026",
+      "file": "assets/bulletins/2026-06-14.pdf"
+    }
+  ],
+  "photos": {
+    "hero": {
+      "src": null,
+      "labelKo": "첫 화면 대표 사진: 교회 예배 또는 공동체",
+      "labelVi": "Ảnh chính: buổi thờ phượng hoặc cộng đồng",
+      "ratio": "16:10",
+      "minWidth": 1600,
+      "altKo": "",
+      "altVi": ""
+    },
+    "entrance": {
+      "src": null,
+      "labelKo": "교회 외관·입구: 처음 방문자 길찾기",
+      "labelVi": "Bên ngoài và lối vào Hội Thánh",
+      "ratio": "4:3",
+      "minWidth": 1200,
+      "altKo": "",
+      "altVi": ""
+    },
+    "worship": {
+      "src": null,
+      "labelKo": "실제 예배 모습",
+      "labelVi": "Buổi thờ phượng thực tế",
+      "ratio": "4:3",
+      "minWidth": 1200,
+      "altKo": "",
+      "altVi": ""
+    },
+    "fellowship": {
+      "src": null,
+      "labelKo": "식사·친교 또는 다음세대 모습",
+      "labelVi": "Thông công, bữa ăn hoặc thế hệ tiếp theo",
+      "ratio": "4:3",
+      "minWidth": 1200,
+      "altKo": "",
+      "altVi": ""
+    },
+    "pastor": {
+      "src": "assets/pastor-lee-boyong-2026.jpg",
+      "labelKo": "담임목사 제공 사진",
+      "labelVi": "Ảnh mục sư được cung cấp",
+      "ratio": "4:3",
+      "minWidth": 1000,
+      "altKo": "하노이 선교교회 담임목사 이보용 목사",
+      "altVi": "Mục sư Lee Bo-yong của Hội Thánh Truyền Giáo Hà Nội"
+    }
+  }
+}
