@@ -9,6 +9,7 @@
 | assets/church-2026-10/choir.jpg | Google 포토 20261025_105916.jpg | 예배 배너, 사진 갤러리 |
 | assets/church-2026-10/sermon.jpg | Google 포토 20261025_110714.jpg | 사진 갤러리 |
 | assets/church-2026-10/prayer.jpg | Google 포토 20261025_114725.jpg | 기도 배너, 사진 갤러리 |
+| assets/church-2026-10/support-prayer.jpg | Google 포토 20261025_114729.jpg (하단 촬영시각을 제외하도록 크롭) | 선교후원 구역 기도 사진 |
 | assets/church-2026-10/entrance.jpg | 카카오톡 KakaoTalk_20261025_092724717_01.jpg | 사진 갤러리 |
 | assets/church-2026-10/hall.jpg | 카카오톡 KakaoTalk_20261025_092724717_08.jpg | 사진 갤러리 |
 | assets/church-2026-10/fellowship.jpg | 카카오톡 KakaoTalk_20261025_092724717_17.jpg | 사진 갤러리 |
