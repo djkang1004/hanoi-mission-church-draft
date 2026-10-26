@@ -14,7 +14,7 @@
 | assets/church-2026-10/fellowship.jpg | 카카오톡 KakaoTalk_20261025_092724717_17.jpg | 사진 갤러리 |
 | assets/church-2026-10/building.jpg | 카카오톡 KakaoTalk_20261025_092724717_22.jpg | 사진 갤러리 |
 
-Google 포토 공유 앨범: https://photos.app.goo.gl/iwJsZgZfHiGTqCfw9. 사진 제공·사용 승인 범위는 공개 전에 교회와 확인할 것. 원본은 이 폴더에 포함하지 않고 웹용 보정본만 둔다.
+Google 포토 공유 앨범: https://photos.app.goo.gl/iwJsZgZfHiGTqCfw9. 이 선별 사진의 홈페이지 공개 사용은 사용자가 2026-10-26에 승인했다. 원본은 이 폴더에 포함하지 않고 웹용 보정본만 둔다.
 
 ## 계속 사용 중인 Pexels 참고 사진
 
