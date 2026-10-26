@@ -3,8 +3,8 @@
   'use strict';
   const api = 'https://public-api.wordpress.com/rest/v1.1/sites/hanoimissionchurchv2.wordpress.com/posts/';
   const mediaHost = 'hanoimissionchurchv2.wordpress.com';
-  const categoryNames = { '주보':'bulletins', '교회소식':'notices', '교육자료':'study', '선교자료':'mission', '기타자료':'other' };
-  const categories = {all:{ko:'전체',vi:'Tất cả'},bulletins:{ko:'주보',vi:'Bản tin'},notices:{ko:'교회소식',vi:'Tin Hội Thánh'},study:{ko:'교육자료',vi:'Tài liệu học'},mission:{ko:'선교자료',vi:'Tài liệu truyền giáo'},other:{ko:'기타',vi:'Khác'}};
+  const categoryNames = { '주보':'bulletins', '설교PPT':'sermons', '교회소식':'notices', '교육자료':'study', '선교자료':'mission', '기타자료':'other' };
+  const categories = {all:{ko:'전체',vi:'Tất cả'},bulletins:{ko:'주보',vi:'Bản tin'},sermons:{ko:'설교PPT',vi:'PowerPoint bài giảng'},notices:{ko:'교회소식',vi:'Tin Hội Thánh'},study:{ko:'교육자료',vi:'Tài liệu học'},mission:{ko:'선교자료',vi:'Tài liệu truyền giáo'},other:{ko:'기타',vi:'Khác'}};
   const labels = {loading:{ko:'자료 목록을 불러오는 중입니다.',vi:'Đang tải danh sách tài liệu.'},error:{ko:'자료 서버에 연결하지 못했습니다. 잠시 후 ‘새 자료 확인’을 눌러주세요.',vi:'Không thể kết nối máy chủ tài liệu. Vui lòng thử “Làm mới” sau.'},empty:{ko:'해당 자료가 없습니다.',vi:'Không có tài liệu phù hợp.'},count:{ko:n=>`총 ${n}개 자료`,vi:n=>`${n} tài liệu`},view:{ko:'열람',vi:'Xem'},download:{ko:'다운로드',vi:'Tải xuống'},prev:{ko:'이전',vi:'Trước'},next:{ko:'다음',vi:'Tiếp'},undated:{ko:'날짜 미상',vi:'Không rõ ngày'}};
   const state = {lang:localStorage.getItem('hmc-lang')==='vi'?'vi':'ko',category:'all',search:'',page:1,records:[]};
   const $ = id => document.getElementById(id);
@@ -15,7 +15,7 @@
   function mediaLinks(html) {
     const doc=new DOMParser().parseFromString(html||'','text/html');
     return [...doc.querySelectorAll('a[href]')].map(a=>{
-      try {const u=new URL(a.getAttribute('href'));const ext=u.pathname.split('.').pop().toLowerCase();return u.protocol==='https:'&&u.hostname===mediaHost&&u.pathname.startsWith('/wp-content/uploads/')&&['pdf','jpg','jpeg','png','webp'].includes(ext)?{url:u.href,ext}:null;}catch{return null;}
+      try {const u=new URL(a.getAttribute('href'));const ext=u.pathname.split('.').pop().toLowerCase();return u.protocol==='https:'&&u.hostname===mediaHost&&u.pathname.startsWith('/wp-content/uploads/')&&['pdf','ppt','pptx','pps','ppsx','jpg','jpeg','png','webp'].includes(ext)?{url:u.href,ext}:null;}catch{return null;}
     }).filter(Boolean);
   }
   function parsePost(post) {
@@ -50,8 +50,8 @@
     const icon=document.createElement('span');icon.className='file-icon';icon.textContent=r.ext==='post'?'글':r.ext.toUpperCase();
     const meta=document.createElement('div');meta.className='record-meta';const small=document.createElement('small');small.textContent=`${categories[r.category][state.lang]} · ${r.date?r.date.replaceAll('-','.'):tr('undated')} · ${r.ext.toUpperCase()}`;
     const title=document.createElement('strong');title.textContent=titleOf(r);meta.append(small,title);
-    const actions=document.createElement('div');actions.className='record-actions';const view=document.createElement('a');view.href=r.url;view.target='_blank';view.rel='noopener noreferrer';view.textContent=tr('view');view.setAttribute('aria-label',`${titleOf(r)} ${tr('view')}`);actions.appendChild(view);
-    if(r.downloadable){const dl=document.createElement('a');dl.href=r.url;dl.target='_blank';dl.rel='noopener noreferrer';dl.textContent=tr('download');dl.setAttribute('aria-label',`${titleOf(r)} ${tr('download')}`);dl.title=state.lang==='ko'?'PDF 뷰어에서 저장할 수 있습니다.':'Có thể lưu trong trình xem PDF.';actions.appendChild(dl)}
+    const actions=document.createElement('div');actions.className='record-actions';const view=document.createElement('a');view.href=r.category==='sermons'&&['ppt','pptx','pps','ppsx'].includes(r.ext)?`https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(r.url)}`:r.url;view.target='_blank';view.rel='noopener noreferrer';view.textContent=tr('view');view.setAttribute('aria-label',`${titleOf(r)} ${tr('view')}`);actions.appendChild(view);
+    if(r.downloadable&&r.category!=='sermons'){const dl=document.createElement('a');dl.href=r.url;dl.target='_blank';dl.rel='noopener noreferrer';dl.textContent=tr('download');dl.setAttribute('aria-label',`${titleOf(r)} ${tr('download')}`);dl.title=state.lang==='ko'?'PDF 뷰어에서 저장할 수 있습니다.':'Có thể lưu trong trình xem PDF.';actions.appendChild(dl)}
     card.append(icon,meta,actions);return card;
   }
   function render() {
