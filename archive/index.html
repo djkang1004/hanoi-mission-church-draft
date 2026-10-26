@@ -29,7 +29,7 @@
     const repoApi='https://api.github.com/repos/djkang1004/hanoi-mission-church-draft/git/trees/main?recursive=1';
     const categories={all:{ko:'전체',vi:'Tất cả'},bulletins:{ko:'주보',vi:'Bản tin'},notices:{ko:'교회소식',vi:'Tin Hội Thánh'},study:{ko:'교육자료',vi:'Tài liệu học'},mission:{ko:'선교자료',vi:'Tài liệu truyền giáo'},other:{ko:'기타',vi:'Khác'}};
     const folderCategories={'assets/bulletins/':'bulletins','assets/library/notices/':'notices','assets/library/study/':'study','assets/library/mission/':'mission','assets/library/other/':'other'};
-    const fallbackDates=['2026-10-18','2026-10-11','2026-09-27','2026-08-30','2026-08-23','2026-08-16','2026-08-09','2026-08-02','2026-07-26','2026-07-12','2026-07-05','2026-06-14'];
+    const fallbackDates=['2026-10-25','2026-10-18','2026-10-11','2026-09-27','2026-08-30','2026-08-23','2026-08-16','2026-08-09','2026-08-02','2026-07-26','2026-07-12','2026-07-05','2026-06-14'];
     const fallback=fallbackDates.map(date=>({path:`assets/bulletins/${date}.pdf`,category:'bulletins'}));
     const labels={loading:{ko:'자료 목록을 불러오는 중입니다.',vi:'Đang tải danh sách tài liệu.'},fallback:{ko:'새 파일 목록을 확인하지 못해 저장된 목록을 표시합니다. 잠시 뒤 다시 시도해 주세요.',vi:'Không tải được danh sách mới; đang hiển thị danh sách đã lưu. Vui lòng thử lại sau.'},empty:{ko:'해당 자료가 없습니다.',vi:'Không có tài liệu phù hợp.'},count:{ko:n=>`총 ${n}개 자료`,vi:n=>`${n} tài liệu`},view:{ko:'열람',vi:'Xem'},download:{ko:'다운로드',vi:'Tải xuống'},prev:{ko:'이전',vi:'Trước'},next:{ko:'다음',vi:'Tiếp'},undated:{ko:'날짜 미상',vi:'Không rõ ngày'}};
     const state={lang:localStorage.getItem('hmc-lang')==='vi'?'vi':'ko',category:'all',search:'',page:1,records:[],source:''};
