@@ -69,7 +69,7 @@
     finally {$('refresh').disabled=false}
   }
   document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
-  $('search').addEventListener('input',e=>{state.search=e.target.value;state.page=1;render()});$('refresh').addEventListener('click',load);
+  $('search').addEventListener('input',e=>{state.search=e.target.value;state.page=1;render()});$('search-button').addEventListener('click',()=>{state.search=$('search').value;state.page=1;render()});$('search').addEventListener('keydown',e=>{if(e.key==='Enter')$('search-button').click()});$('refresh').addEventListener('click',load);
   document.querySelector('a[href="#admin"]').addEventListener('click',()=>$('admin').open=true);if(location.hash==='#admin')$('admin').open=true;
   setLang(state.lang);load();
 })();

@@ -4,10 +4,11 @@
 
 | 웹용 파일 | 원본 | 사용 위치 |
 |---|---|---|
-| assets/church-2026-10/hero-worship.jpg | Google 포토 20261025_114520.jpg | 첫 화면 |
-| assets/church-2026-10/congregation.jpg | Google 포토 20261025_102957.jpg | 교회 소개, 사진 갤러리 |
+| assets/church-2026-10/hero-worship.jpg | Google 포토 20261025_114520.jpg | 기존 첫 화면 사진, 보관 |
+| assets/church-2026-10/hero-worship-full-v2.jpg | Google 포토 20261025_114725.jpg (촬영시각과 빈 의자가 보이지 않도록 실제 사진 크롭) | 목사님 의견 반영 첫 화면 사진 |
+| assets/church-2026-10/congregation.jpg | Google 포토 20261025_102957.jpg | 첫 화면, 사진 갤러리 |
 | assets/church-2026-10/choir.jpg | Google 포토 20261025_105916.jpg | 예배 배너, 사진 갤러리 |
-| assets/church-2026-10/sermon.jpg | Google 포토 20261025_110714.jpg | 사진 갤러리 |
+| assets/church-2026-10/sermon.jpg | Google 포토 20261025_110714.jpg | 교회 소개, 사진 갤러리 |
 | assets/church-2026-10/prayer.jpg | Google 포토 20261025_114725.jpg | 기도 배너, 사진 갤러리 |
 | assets/church-2026-10/support-prayer.jpg | Google 포토 20261025_114729.jpg (하단 촬영시각을 제외하도록 크롭) | 선교후원 구역 기도 사진 |
 | assets/church-2026-10/entrance.jpg | 카카오톡 KakaoTalk_20261025_092724717_01.jpg | 사진 갤러리 |
