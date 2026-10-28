@@ -5,10 +5,10 @@
 | 웹용 파일 | 원본 | 사용 위치 |
 |---|---|---|
 | assets/church-2026-10/hero-worship.jpg | Google 포토 20261025_114520.jpg | 기존 첫 화면 사진, 보관 |
-| assets/church-2026-10/hero-worship-full-v3.jpg | Google 포토 20261025_114701.jpg (촬영시각과 빈 의자가 보이지 않도록 실제 사진 크롭) | 목사님 의견 반영 첫 화면 사진 |
+| assets/church-2026-10/hero-worship-full-v3.jpg | Google 포토 20261025_114701.jpg (촬영시각과 빈 의자가 보이지 않도록 실제 사진 크롭) | 기존 실제 축도 장면 첫 화면, 보관 |
 | assets/church-2026-10/congregation.jpg | Google 포토 20261025_102957.jpg | 첫 화면, 사진 갤러리 |
 | assets/church-2026-10/choir.jpg | Google 포토 20261025_105916.jpg | 예배 배너, 사진 갤러리 |
-| assets/church-2026-10/sermon.jpg | Google 포토 20261025_110714.jpg | 사진 갤러리 |
+| assets/church-2026-10/sermon.jpg | Google 포토 20261025_110714.jpg | 교회소개, 사진 갤러리 |
 | assets/church-2026-10/prayer.jpg | Google 포토 20261025_114725.jpg | 기도 배너, 사진 갤러리 |
 | assets/church-2026-10/support-prayer.jpg | Google 포토 20261025_114729.jpg (하단 촬영시각을 제외하도록 크롭) | 선교후원 구역 기도 사진 |
 | assets/church-2026-10/entrance.jpg | 카카오톡 KakaoTalk_20261025_092724717_01.jpg | 사진 갤러리 |
@@ -47,7 +47,9 @@ Google 포토 공유 앨범: https://photos.app.goo.gl/iwJsZgZfHiGTqCfw9. 이 �
 
 공유 앨범은 사진 출처이며 홈페이지 버튼으로 전체 앨범을 공개 연결하지 않음. 인물 중심 실제 크롭으로 빈 의자를 줄였으며 인물을 합성하지 않음.
 
-## 교회소개 사진 교체 승인본
-- assets/church-2026-10/about-worship-congregation-2x.jpg: 사용자 첨부 image-b4ac84d7-ed01-41ab-bb29-3a2df808242d.png. 1024×1008 화면 캡처를 Lanczos 2배 보간(2048×2016), 약한 선명도 보정.
-- 인물과 내장 문구·표시는 유지. 인물 생성·복제·배경 합성 없음. 동일한 고해상도 원본은 찾지 못함.
-- 중복 카드 문구를 제거함. 첫 화면 배경과 주일설교 영상 변경 없음. 사용자 미리보기 승인 후 공개 반영.
+## 목사님 실제 사진 요청 반영 승인본
+- 첫 화면: assets/church-2026-10/hero-sermon-real-v4.jpg, 원본 Google 포토 20261025_110714.jpg (4000×3000). crop 0,1080,4000,2680 → 2400×960. 원본 인물·좌석 그대로, 촬영시각 글자만 프레임 밖으로 제외.
+- 교회소개: 기존 실제 설교 사진 assets/church-2026-10/sermon.jpg로 복구.
+- 앞서 사용자 제공 스크린샷을 확대했던 about-worship-congregation-2x.jpg는 사용자가 Gemini로 성도를 늘린 이미지임을 확인했고 목사님이 합성표시 때문에 거절하셨으므로 이번 미리보기에서는 사용하지 않음. 단순 확대 작업을 했다는 사실이 원본의 진정성을 보증하지 않음.
+- 수요 찬양 중복: worship-together.jpg 카드를 제거하고, 실제 수요예배 사진 28_P_111406.jpg를 crop 0,600,1200,1500하여 worship-scene.jpg (1200×900)로 교체. 설명: 수요예배 · 예배 전경 / Thờ phượng thứ Tư · Toàn cảnh buổi nhóm. 기타 찬양 카드는 한 장만 유지.
+- 사용자가 미리보기 확인 후 공개 반영 승인. 큰 주일설교 영상은 변경하지 않음.
