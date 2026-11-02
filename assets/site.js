@@ -119,6 +119,47 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && quick.classList.contains('open')) { setQuick(false); qBtn.focus(); } });
   }
 
+  /* 최신 주보 자동 반영: 교회소식의 주보 카드를 WordPress 자료실의 가장 최근 주보로 바꿉니다.
+   * WordPress에 연결하지 못하거나 더 새로운 주보가 없으면 HTML에 적어 둔 카드를 그대로 둡니다.
+   * 주보 글 제목에 '제45호'처럼 적으면 카드 제목에도 호수가 표시됩니다. */
+  (async () => {
+    const card = document.getElementById('bulletin-card');
+    if (!card) return;
+    const pdfLink = document.getElementById('bulletin-pdf');
+    const timeEl = card.querySelector('time');
+    const titleEl = card.querySelector('h3');
+    const host = 'hanoimissionchurchv2.wordpress.com';
+    const api = 'https://public-api.wordpress.com/rest/v1.1/sites/' + host + '/posts/';
+    try {
+      const res = await fetch(api + '?number=20&order_by=date&order=DESC&_=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      const found = (data.posts || []).map(post => {
+        if (post.status !== 'publish' || !Object.keys(post.categories || {}).includes('주보')) return null;
+        const title = String(post.title || '').replace(/<[^>]*>/g, '').trim();
+        const m = title.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/);
+        const date = m ? m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0') : String(post.date || '').slice(0, 10);
+        const doc = new DOMParser().parseFromString(post.content || '', 'text/html');
+        const pdf = [...doc.querySelectorAll('a[href]')].map(a => { try { return new URL(a.getAttribute('href')); } catch { return null; } })
+          .find(u => u && u.protocol === 'https:' && u.hostname === host && u.pathname.startsWith('/wp-content/uploads/') && u.pathname.toLowerCase().endsWith('.pdf'));
+        const issue = (title.match(/제\s*(\d+)\s*호/) || [])[1];
+        return pdf && /^\d{4}-\d{2}-\d{2}$/.test(date) ? { date, url: pdf.href, issue, id: post.ID } : null;
+      }).filter(Boolean).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)[0];
+      const current = timeEl.getAttribute('datetime') || '';
+      if (!found || found.date < current) return;
+      if (!found.issue && found.date === current) found.issue = (titleEl.textContent.match(/제\s*(\d+)\s*호/) || [])[1];
+      const [y, mo, d] = found.date.split('-');
+      const ko = Number(mo) + '월 ' + Number(d) + '일 주일 주보' + (found.issue ? ' (제' + found.issue + '호)' : '');
+      const vi = 'Bản tin Chúa Nhật ' + d + '/' + mo + '/' + y + (found.issue ? ' (số ' + found.issue + ')' : '');
+      timeEl.setAttribute('datetime', found.date);
+      timeEl.textContent = y + '.' + mo + '.' + d;
+      titleEl.setAttribute('data-vi', vi);
+      koHtml.set(titleEl, ko);
+      titleEl.textContent = root.lang === 'vi' ? vi : ko;
+      if (pdfLink) pdfLink.href = found.url;
+    } catch { /* 연결 실패 시 기본 카드를 유지합니다 */ }
+  })();
+
   /* 기간 한정 공지 띠: data-notice-until 시각 전까지만 표시 */
   document.querySelectorAll('[data-notice-until]').forEach(el => {
     const end = new Date(el.dataset.noticeUntil);
