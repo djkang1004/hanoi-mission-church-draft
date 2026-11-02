@@ -27,6 +27,7 @@
   /* 저장소에 보관된 자료 (WordPress 연결 실패 시 표시). 새 파일을 assets/ 에 올리면 여기에도 한 줄 추가하세요.
    * 'node scripts/check-site.mjs' 가 목록과 실제 파일이 맞는지 확인합니다. */
   const LOCAL_FALLBACK = [
+    { category: 'bulletins', date: '2026-11-01', file: 'assets/bulletins/2026-11-01.pdf' },
     { category: 'bulletins', date: '2026-10-25', file: 'assets/bulletins/2026-10-25.pdf' },
     { category: 'bulletins', date: '2026-10-18', file: 'assets/bulletins/2026-10-18.pdf' },
     { category: 'bulletins', date: '2026-10-11', file: 'assets/bulletins/2026-10-11.pdf' },
