@@ -108,6 +108,17 @@
     iframe.focus();
   }));
 
+  /* 바로가기 메뉴 (데스크톱 드롭다운) */
+  const quick = document.getElementById('quickMenu');
+  if (quick) {
+    const qBtn = quick.querySelector('.quick-btn');
+    const setQuick = open => { quick.classList.toggle('open', open); qBtn.setAttribute('aria-expanded', String(open)); };
+    qBtn.addEventListener('click', () => setQuick(!quick.classList.contains('open')));
+    quick.addEventListener('click', e => { if (e.target.closest('a')) setQuick(false); });
+    document.addEventListener('click', e => { if (quick.classList.contains('open') && !quick.contains(e.target)) setQuick(false); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && quick.classList.contains('open')) { setQuick(false); qBtn.focus(); } });
+  }
+
   /* 기간 한정 공지 띠: data-notice-until 시각 전까지만 표시 */
   document.querySelectorAll('[data-notice-until]').forEach(el => {
     const end = new Date(el.dataset.noticeUntil);

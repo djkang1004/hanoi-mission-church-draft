@@ -471,6 +471,31 @@
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .reveal{opacity:1;transform:none}*,*:before,*:after{transition:none!important;animation:none!important}}
       /* 휴대폰: 기도 사진 띠에서 목사님 얼굴·어깨가 제목에 가려지지 않도록 글씨를 위로 올림 */
     @media(max-width:620px){.band-prayer{min-height:400px;align-items:flex-start;padding-top:34px;background-position:30% 53%}}
+      /* ===== 바로가기 메뉴 ===== */
+    .quick-menu{position:relative;display:none}
+    .quick-btn{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:8px 15px;border:0;border-radius:999px;background:var(--gold);color:#172435;font-weight:800;font-size:.86rem;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(215,163,75,.35)}
+    .quick-btn:hover{background:var(--gold-soft)}
+    .quick-caret{font-size:.8rem;transition:transform .2s}
+    .quick-menu.open .quick-caret{transform:rotate(180deg)}
+    .quick-panel{display:none;position:absolute;right:0;top:calc(100% + 12px);z-index:70;width:330px;padding:10px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow)}
+    .quick-menu.open .quick-panel{display:block}
+    .quick-panel>a,.nav-quick>a{display:block;padding:10px 12px;border-radius:12px}
+    .quick-panel>a:hover{background:var(--mist)}
+    .quick-panel b,.nav-quick b{display:block;color:var(--navy);font-size:.95rem}
+    .quick-panel small,.nav-quick small{display:block;margin-top:2px;color:var(--muted);font-size:.78rem;font-weight:600}
+    .quick-social{display:flex;gap:8px;margin-top:6px;padding:10px 6px 4px;border-top:1px solid var(--line)}
+    .quick-social a{flex:1;padding:8px 6px;border-radius:999px;background:var(--mist);color:var(--navy);font-size:.78rem;font-weight:800;text-align:center}
+    .quick-social a:hover{background:#e3eeef}
+    .nav-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+    .nav-quick small{display:none}
+    .navlinks .nav-quick>a{padding:9px 12px}
+    .navlinks .nav-quick b{font-size:.88rem;line-height:1.3}
+    .nav-quick{gap:6px;padding:8px 0 10px}
+    .nav-quick-title{grid-column:1/-1;margin:0;color:var(--teal);font-size:.74rem;font-weight:800;letter-spacing:.14em}
+    .navlinks .nav-quick>a{border:1px solid var(--line);background:var(--mist);padding:10px 12px}
+    .navlinks .nav-quick .quick-social{grid-column:1/-1;margin:0;padding:2px 0 0;border:0}
+    .navlinks .nav-quick .quick-social a{border:0;padding:8px 6px}
+    @media(min-width:1081px){.quick-menu{display:block}.nav-quick{display:none}}
   </style>
   <script src="assets/site.js" defer></script>
 </head>
@@ -483,6 +508,7 @@
     <div class="container nav">
       <a class="brand" href="#home"><img class="brand-emblem" src="assets/hmc-color-emblem.png" alt="" width="46" height="46"><span><strong data-vi="Hội Thánh Truyền Giáo Hà Nội">하노이 선교교회</strong><small>HANOI MISSION CHURCH</small></span></a>
       <nav class="navlinks" id="navlinks" aria-label="주 메뉴" data-vi-aria-label="Menu chính">
+        <div class="nav-quick" aria-label="바로가기" data-vi-aria-label="Lối tắt"><p class="nav-quick-title" data-vi="LỐI TẮT">바로가기</p><a href="#newcomer"><b data-vi="Lần đầu đến Hội Thánh?">처음 오셨나요?</b><small data-vi="Hướng dẫn khách mới">첫 방문 안내</small></a><a href="#worship"><b data-vi="Giờ thờ phượng">주일예배 시간</b><small data-vi="Giờ và địa điểm">예배 시간·장소</small></a><a href="#location"><b data-vi="Chỉ đường · Đỗ xe">오시는 길·주차</b><small data-vi="Địa chỉ · Bản đồ · Đỗ xe">주소·지도·주차</small></a><a href="#sermons"><b data-vi="Bài giảng tuần này">이번 주 설교 영상</b><small data-vi="Bài giảng Chúa Nhật mới nhất">최신 주일설교</small></a><a href="archive/"><b data-vi="Bản tin · PPT">주보·PPT 자료실</b><small data-vi="Xem tài liệu theo ngày">날짜별 자료 열람</small></a><a href="https://pf.kakao.com/_mlBWX/chat?bot=true" target="_blank" rel="noopener"><b data-vi="Hỏi qua KakaoTalk">카카오톡 문의</b><small data-vi="Trợ lý tự động trả lời trước">챗봇이 먼저 안내</small></a><div class="quick-social"><a href="https://www.youtube.com/@%ED%95%98%EB%85%B8%EC%9D%B4%EC%84%A0%EA%B5%90%EA%B5%90%ED%9A%8C" target="_blank" rel="noopener">YouTube</a><a href="https://www.instagram.com/hanoimissionchurch/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@user1340041475712" target="_blank" rel="noopener">TikTok</a></div></div>
         <a href="#about" data-vi="Giới thiệu">교회소개</a>
         <a href="#worship" data-vi="Giờ thờ phượng">예배안내</a>
         <a href="#sermons" data-vi="Bài giảng">설교·영상</a>
@@ -493,6 +519,7 @@
         <a href="#location" data-vi="Chỉ đường">오시는 길</a>
       </nav>
       <div class="nav-tools">
+        <div class="quick-menu" id="quickMenu"><button class="quick-btn" type="button" aria-expanded="false" aria-controls="quickPanel" aria-haspopup="true"><span data-vi="Lối tắt">바로가기</span><span class="quick-caret" aria-hidden="true">▾</span></button><div class="quick-panel" id="quickPanel" role="region" aria-label="바로가기" data-vi-aria-label="Lối tắt"><a href="#newcomer"><b data-vi="Lần đầu đến Hội Thánh?">처음 오셨나요?</b><small data-vi="Hướng dẫn khách mới">첫 방문 안내</small></a><a href="#worship"><b data-vi="Giờ thờ phượng">주일예배 시간</b><small data-vi="Giờ và địa điểm">예배 시간·장소</small></a><a href="#location"><b data-vi="Chỉ đường · Đỗ xe">오시는 길·주차</b><small data-vi="Địa chỉ · Bản đồ · Đỗ xe">주소·지도·주차</small></a><a href="#sermons"><b data-vi="Bài giảng tuần này">이번 주 설교 영상</b><small data-vi="Bài giảng Chúa Nhật mới nhất">최신 주일설교</small></a><a href="archive/"><b data-vi="Bản tin · PPT">주보·PPT 자료실</b><small data-vi="Xem tài liệu theo ngày">날짜별 자료 열람</small></a><a href="https://pf.kakao.com/_mlBWX/chat?bot=true" target="_blank" rel="noopener"><b data-vi="Hỏi qua KakaoTalk">카카오톡 문의</b><small data-vi="Trợ lý tự động trả lời trước">챗봇이 먼저 안내</small></a><div class="quick-social"><a href="https://www.youtube.com/@%ED%95%98%EB%85%B8%EC%9D%B4%EC%84%A0%EA%B5%90%EA%B5%90%ED%9A%8C" target="_blank" rel="noopener">YouTube</a><a href="https://www.instagram.com/hanoimissionchurch/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@user1340041475712" target="_blank" rel="noopener">TikTok</a></div></div></div>
         <div class="lang" role="group" aria-label="언어 선택 · Chọn ngôn ngữ">
           <button type="button" data-lang="ko" lang="ko" aria-pressed="true" title="한국어">KO</button>
           <button type="button" data-lang="vi" lang="vi" aria-pressed="false" title="Tiếng Việt">VI</button>
