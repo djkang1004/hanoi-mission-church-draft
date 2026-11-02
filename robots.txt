@@ -1,0 +1,9 @@
+# 하노이 선교교회 홈페이지
+# 참고: GitHub Pages 프로젝트 주소(…github.io/hanoi-mission-church-draft/)에서는 이 파일이 적용되지 않으며,
+# 자체 도메인 또는 Cloudflare 배포처럼 사이트 루트에 놓일 때 적용됩니다.
+User-agent: *
+Allow: /
+Disallow: /hanoi-mission-church-v2.html
+Disallow: /hanoi-mission-church-archive-v2.html
+
+Sitemap: https://djkang1004.github.io/hanoi-mission-church-draft/sitemap.xml
