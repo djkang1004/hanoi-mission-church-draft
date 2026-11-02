@@ -208,7 +208,7 @@
     .band-choir{background-image:url(assets/church-2026-10/choir.jpg);background-image:image-set(url(assets/optimized/church-2026-10/choir-1200.webp) type("image/webp"),url(assets/church-2026-10/choir.jpg) type("image/jpeg"));background-position:center 40%}
     .band-word{background-image:url(assets/stock/bible-open.jpg);background-image:image-set(url(assets/optimized/stock/bible-open-1200.webp) type("image/webp"),url(assets/stock/bible-open.jpg) type("image/jpeg"));background-position:center 45%}
     .band-cross{background-image:url(assets/stock/cross-halo.jpg);background-image:image-set(url(assets/optimized/stock/cross-halo-1200.webp) type("image/webp"),url(assets/stock/cross-halo.jpg) type("image/jpeg"));background-position:center 40%}
-    .band-prayer{background-image:url(assets/church-2026-10/prayer.jpg);background-image:image-set(url(assets/optimized/church-2026-10/prayer-1200.webp) type("image/webp"),url(assets/church-2026-10/prayer.jpg) type("image/jpeg"));background-position:center 35%}
+    .band-prayer{background-image:url(assets/church-2026-10/prayer.jpg);background-image:image-set(url(assets/optimized/church-2026-10/prayer-1200.webp) type("image/webp"),url(assets/church-2026-10/prayer.jpg) type("image/jpeg"));background-position:center 53%}
     @media(max-width:620px){
       .band-choir{background-image:image-set(url(assets/optimized/church-2026-10/choir-640.webp) type("image/webp"),url(assets/church-2026-10/choir.jpg) type("image/jpeg"))}
       .band-word{background-image:image-set(url(assets/optimized/stock/bible-open-640.webp) type("image/webp"),url(assets/stock/bible-open.jpg) type("image/jpeg"))}
@@ -469,6 +469,8 @@
     .js .reveal{opacity:0;transform:translateY(20px);transition:opacity .65s,transform .65s}
     .js .reveal.visible{opacity:1;transform:none}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .reveal{opacity:1;transform:none}*,*:before,*:after{transition:none!important;animation:none!important}}
+      /* 휴대폰: 기도 사진 띠에서 목사님 얼굴·어깨가 제목에 가려지지 않도록 글씨를 위로 올림 */
+    @media(max-width:620px){.band-prayer{min-height:400px;align-items:flex-start;padding-top:34px;background-position:30% 53%}}
   </style>
   <script src="assets/site.js" defer></script>
 </head>
