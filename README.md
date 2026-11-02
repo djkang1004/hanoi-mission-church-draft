@@ -1,6 +1,6 @@
 # 하노이 선교교회 홈페이지 초안
 
-- 공개 주소(현재): https://djkang1004.github.io/hanoi-mission-church-draft/ · 자료실: `archive/`
+- 공개 주소(현재): https://hanoimissionchurch.com/ · 자료실: `archive/`
 - 같은 파일을 Cloudflare Workers 정적 배포(`wrangler.jsonc`)로도 올릴 수 있습니다.
 
 ## 실행 방법

@@ -12,7 +12,7 @@ import { dirname, join, posix, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SITE_URL = 'https://djkang1004.github.io/hanoi-mission-church-draft/';
+const SITE_URL = 'https://hanoimissionchurch.com/';
 const PAGES = ['index.html', 'archive/index.html'];
 const IMAGE_BUDGET_KB = 500;
 const EXTERNAL = process.argv.includes('--external');
