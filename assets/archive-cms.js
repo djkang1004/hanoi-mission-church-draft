@@ -7,8 +7,8 @@
   const api = 'https://public-api.wordpress.com/rest/v1.1/sites/hanoimissionchurchv2.wordpress.com/posts/';
   const mediaHost = 'hanoimissionchurchv2.wordpress.com';
   const PAGE_SIZE = 12;
-  const categoryNames = { '주보': 'bulletins', '설교PPT': 'sermons', '교회소식': 'notices', '교육자료': 'study', '선교자료': 'mission', '기타자료': 'other' };
-  const categories = { all: { ko: '전체', vi: 'Tất cả' }, bulletins: { ko: '주보', vi: 'Bản tin' }, sermons: { ko: '설교PPT', vi: 'PowerPoint bài giảng' }, notices: { ko: '교회소식', vi: 'Tin Hội Thánh' }, study: { ko: '교육자료', vi: 'Tài liệu học' }, mission: { ko: '선교자료', vi: 'Tài liệu truyền giáo' }, other: { ko: '기타', vi: 'Khác' } };
+  const categoryNames = { '주보': 'bulletins', '설교PPT': 'sermons', '교회소식': 'notices', '교육자료': 'study', '선교자료': 'mission', '기타자료': 'other', '사진자료': 'photos' };
+  const categories = { all: { ko: '전체', vi: 'Tất cả' }, bulletins: { ko: '주보', vi: 'Bản tin' }, sermons: { ko: '설교PPT', vi: 'PowerPoint bài giảng' }, notices: { ko: '교회소식', vi: 'Tin Hội Thánh' }, study: { ko: '교육자료', vi: 'Tài liệu học' }, mission: { ko: '선교자료', vi: 'Tài liệu truyền giáo' }, photos: { ko: '사진자료', vi: 'Ảnh' }, other: { ko: '기타', vi: 'Khác' } };
   const labels = {
     loading: { ko: '자료 목록을 불러오는 중입니다.', vi: 'Đang tải danh sách tài liệu.' },
     fallback: { ko: '자료 서버에 연결하지 못해 홈페이지에 보관된 주보와 자료를 보여 드립니다. 잠시 후 ‘새 자료 확인’을 눌러 주세요.', vi: 'Không thể kết nối máy chủ tài liệu, đang hiển thị bản tin và tài liệu lưu trên website. Vui lòng nhấn “Làm mới” sau ít phút.' },
@@ -45,6 +45,12 @@
     { category: 'study', date: '', title: '현대인과 우상 강의자료 2026', file: 'assets/library/study/현대인과 우상 강의자료 2026.pptx' }
   ];
 
+  /* 홈페이지에 이미 게시된 사진을 앨범으로 묶어 둔 목록입니다. WordPress에 분류 '사진자료' 글(사진 첨부)을 올리면 이 목록과 함께 표시됩니다. */
+  const LOCAL_PHOTOS = [
+    { date: '2026-11-01', title: '2026.11.01 주일예배', titleVi: 'Thờ phượng Chúa Nhật 01.11.2026', files: ['assets/optimized/church-2026-11-01/hmc_104753.webp', 'assets/optimized/church-2026-11-01/hmc_113551.webp', 'assets/optimized/church-2026-11-01/hmc_113555.webp'] },
+    { date: '2026-10-28', title: '2026.10.28 수요예배', titleVi: 'Thờ phượng thứ Tư 28.10.2026', files: ['assets/optimized/church-2026-10-28/pastor-guitar-720.webp', 'assets/optimized/church-2026-10-28/sermon-720.webp', 'assets/optimized/church-2026-10-28/worship-scene-1200.webp', 'assets/optimized/church-2026-10-28/joint-prayer-1200.webp'] },
+    { date: '2026-10-25', title: '2026.10.25 주일예배와 교회 공간', titleVi: 'Thờ phượng Chúa Nhật 25.10.2026 và không gian Hội Thánh', files: ['assets/optimized/church-2026-10/hall-1200.webp', 'assets/optimized/church-2026-10/choir-1200.webp', 'assets/optimized/church-2026-10/sermon-1200.webp', 'assets/optimized/church-2026-10/prayer-1200.webp', 'assets/optimized/church-2026-10/fellowship-1200.webp', 'assets/optimized/church-2026-10/building-1200.webp'] }
+  ];
   const state = { lang: document.documentElement.lang === 'vi' ? 'vi' : 'ko', category: 'all', search: '', page: 1, records: [], loaded: false, notice: '' };
   const $ = id => document.getElementById(id);
   const tr = key => labels[key][state.lang];
@@ -62,6 +68,17 @@
       } catch { return null; }
     }).filter(Boolean);
   }
+  function imageUrls(html) {
+    const doc = new DOMParser().parseFromString(html || '', 'text/html');
+    const urls = [];
+    [...doc.querySelectorAll('img[src],a[href]')].forEach(el => {
+      try {
+        const u = new URL(el.getAttribute('src') || el.getAttribute('href'));
+        if (u.protocol === 'https:' && /(^|\.)(wordpress|wp)\.com$/.test(u.hostname) && /\.(jpe?g|png|webp)$/i.test(u.pathname)) { u.search = ''; if (!urls.includes(u.href)) urls.push(u.href); }
+      } catch { /* 잘못된 주소는 건너뜀 */ }
+    });
+    return urls.slice(0, 40);
+  }
   function parsePost(post) {
     if (post.status !== 'publish') return null;
     const category = Object.keys(post.categories || {}).map(name => categoryNames[name]).find(Boolean);
@@ -69,6 +86,10 @@
     const title = String(post.title || '').replace(/<[^>]*>/g, '').trim();
     const match = title.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/);
     const date = match ? `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}` : String(post.date || '').slice(0, 10);
+    if (category === 'photos') {
+      const images = imageUrls(post.content);
+      return images.length ? { id: post.ID, title, date, category, url: images[0], ext: 'photo', downloadable: true, images } : null;
+    }
     const media = mediaLinks(post.content)[0] || null;
     if (category === 'bulletins' && (!media || media.ext !== 'pdf')) return null;
     const url = media?.url || safePostUrl(post.URL);
@@ -81,6 +102,10 @@
       const ext = item.file.split('.').pop().toLowerCase();
       return { id: -i - 1, title: item.title || item.file.split('/').pop().replace(/\.[^.]+$/, ''), date: item.date, category: item.category, url, ext, downloadable: true };
     });
+  }
+  function localPhotoRecords() {
+    return LOCAL_PHOTOS.map((a, i) => ({ id: -1000 - i, title: a.title, titleVi: a.titleVi, date: a.date, category: 'photos', ext: 'photo', downloadable: true, local: true,
+      images: a.files.map(f => new URL('../' + f, location.href).href), url: new URL('../' + a.files[0], location.href).href }));
   }
   const sortRecords = list => list.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 
@@ -97,6 +122,7 @@
     });
   }
   function titleOf(r) {
+    if (r.local && state.lang === 'vi' && r.titleVi) return r.titleVi;
     if (r.category === 'bulletins' && r.date) return state.lang === 'ko' ? `주일 주보 · ${r.date.replaceAll('-', '.')}` : `Bản tin Chúa Nhật · ${r.date.split('-').reverse().join('/')}`;
     return r.title;
   }
@@ -105,7 +131,33 @@
     a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = text; a.setAttribute('aria-label', label);
     return a;
   }
+  function makePhotoRow(r) {
+    const card = document.createElement('article');
+    card.className = 'record photo-record';
+    const meta = document.createElement('div');
+    meta.className = 'record-meta';
+    const small = document.createElement('small');
+    small.textContent = categories.photos[state.lang] + ' · ' + (r.date ? r.date.replaceAll('-', '.') : tr('undated')) + ' · ' + r.images.length + (state.lang === 'ko' ? '장' : ' ảnh');
+    const title = document.createElement('strong');
+    title.textContent = titleOf(r);
+    meta.append(small, title);
+    const grid = document.createElement('div');
+    grid.className = 'photo-grid';
+    r.images.slice(0, 8).forEach((src, i) => {
+      const a = document.createElement('a');
+      a.href = src; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.setAttribute('aria-label', titleOf(r) + ' ' + (i + 1));
+      const im = document.createElement('img');
+      im.src = r.local ? src : src + '?w=480'; im.alt = ''; im.loading = 'lazy'; im.decoding = 'async';
+      a.appendChild(im);
+      if (i === 7 && r.images.length > 8) { const more = document.createElement('span'); more.textContent = '+' + (r.images.length - 8); a.appendChild(more); }
+      grid.appendChild(a);
+    });
+    card.append(meta, grid);
+    return card;
+  }
   function makeRow(r) {
+    if (r.category === 'photos' && r.images) return makePhotoRow(r);
     const card = document.createElement('article');
     card.className = 'record';
     const icon = document.createElement('span');
@@ -185,7 +237,7 @@
       console.warn('Church library unavailable:', err.message);
     }
     const useFallback = failed || !records.length;
-    state.records = sortRecords(useFallback ? localRecords() : records);
+    state.records = sortRecords([...(useFallback ? localRecords() : records), ...localPhotoRecords()]);
     state.notice = failed ? 'fallback' : (useFallback ? 'fallbackEmpty' : '');
     state.loaded = true;
     state.page = 1;
@@ -206,6 +258,8 @@
   const adminLink = document.querySelector('a[href="#admin"]');
   if (adminLink) adminLink.addEventListener('click', () => { $('admin').open = true; });
   if (location.hash === '#admin') $('admin').open = true;
+  const startCat = new URLSearchParams(location.search).get('cat');
+  if (startCat && categories[startCat]) state.category = startCat;
   render();
   load();
 })();

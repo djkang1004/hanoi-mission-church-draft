@@ -498,6 +498,35 @@
     .navlinks .nav-quick .quick-social{grid-column:1/-1;margin:0;padding:2px 0 0;border:0}
     .navlinks .nav-quick .quick-social a{border:0;padding:8px 6px}
     @media(min-width:1081px){.quick-menu{display:block}.nav-quick{display:none}}
+      /* ===== 이번 주 교회 소식(주보 발췌) · 공지 팝업 ===== */
+    .news-weekly{grid-column:1/-1;background:linear-gradient(135deg,#fff 0%,#f4f9f8 100%);border-color:#cfe1de}
+    .news-weekly .news-tag{background:var(--navy);color:#fff}
+    .week-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+    .week-list li{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+    .week-list b{color:var(--teal);font-size:.84rem;white-space:nowrap;padding-top:2px}
+    .week-list span{color:var(--ink);font-size:.95rem}
+    .news-source{margin-top:12px!important;font-size:.8rem!important}
+    .news-feed{display:contents}
+    .news-card.feed{border-color:#e7d3a8;background:#fffaf0}
+    .gallery-more{display:flex;justify-content:center;margin-top:18px}
+    .hmc-popup{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:16px;background:rgba(8,30,46,.62)}
+    .hmc-popup[hidden]{display:none}
+    .hmc-popup-box{width:min(460px,100%);max-height:calc(100vh - 32px);overflow:auto;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+    .hmc-popup-box img{display:block;width:100%;max-height:260px;object-fit:cover}
+    .hmc-popup-body{padding:22px 22px 8px}
+    .hmc-popup-tag{margin:0 0 6px;color:var(--teal);font-size:.76rem;font-weight:800;letter-spacing:.1em}
+    .hmc-popup-body h2{margin:0 0 10px;color:var(--navy);font-size:1.3rem;line-height:1.4}
+    .hmc-popup-body p{margin:0 0 8px;color:var(--ink);font-size:.95rem}
+    .hmc-popup-actions{display:flex;flex-wrap:wrap;gap:8px;padding:14px 22px 20px}
+    .hmc-popup-actions a,.hmc-popup-actions button{min-height:42px;border-radius:999px;padding:9px 16px;font-weight:800;font-size:.84rem;cursor:pointer;border:1px solid var(--line);background:#f4f7f8;color:var(--navy)}
+    .hmc-popup-actions a{background:var(--gold);border-color:var(--gold);color:#172435}
+    .hmc-popup-actions .primary{background:var(--navy);border-color:var(--navy);color:#fff;margin-left:auto}
+    @media(max-width:560px){.week-list li{grid-template-columns:1fr}.hmc-popup-actions .primary{margin-left:0}}
+      .serve-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 18px;margin:14px 0 0}
+    .serve-list div{padding-left:12px;border-left:3px solid var(--gold)}
+    .serve-list dt{margin:0;color:var(--teal);font-size:.78rem;font-weight:800}
+    .serve-list dd{margin:2px 0 0;color:var(--navy);font-weight:800}
+    .serve-note{margin-top:14px!important;font-size:.8rem!important;color:var(--muted)}
   </style>
   <script src="assets/site.js" defer></script>
 </head>
@@ -697,6 +726,21 @@
           </div>
         </div>
         <div class="news-grid reveal">
+          <article class="news-card news-weekly">
+            <p class="news-meta"><span class="news-tag" data-vi="Tin tuần này">이번 주 교회 소식</span><time datetime="2026-11-01" data-vi="Bản tin 01.11.2026">2026.11.01 주보</time></p>
+            <h3 data-vi="Tin tức Hội Thánh tuần này">이번 주 교회 소식 · 주보에서</h3>
+            <ul class="week-list">
+              <li><b data-vi="Tin về Mục sư">담임목사 동정</b><span data-vi="Từ thứ Hai 02/11 đến thứ Sáu 06/11, Mục sư quản nhiệm sang Nhật Bản tham dự khóa tĩnh tâm dành cho giáo sĩ khóa 86 Chongshin. Xin cầu nguyện cho chuyến đi.">2일(월)부터 6일(금)까지 총신 86회 선교사 수련회 참석차 일본을 방문합니다. 일정을 위해 기도해 주세요.</span></li>
+              <li><b data-vi="Thờ phượng thứ Tư">수요예배</b><span data-vi="Thứ Tư 04/11, 10:30 sáng, phòng thờ phượng tầng 3 · Bài giảng “Hoạn nạn và sự an ủi” (2 Cô-rinh-tô 1:1-11)">11월 4일(수) 오전 10:30 3층 예배실 · 설교 「고난과 위로」(고린도후서 1:1-11)</span></li>
+              <li><b data-vi="Cầu nguyện sáng">새벽기도</b><span data-vi="Tuần này, Mục sư Ko Yun-seok hướng dẫn buổi cầu nguyện sáng.">이번 주 새벽기도는 고윤석 목사님이 인도하십니다.</span></li>
+              <li><b data-vi="Bữa ăn chung">공동식사</b><span data-vi="Sau buổi thờ phượng Chúa Nhật có bữa ăn chung của Hội Thánh.">주일예배 후에 공동식사가 있습니다.</span></li>
+              <li><b data-vi="Thành viên mới">새가족</b><span data-vi="Chào mừng các tín hữu mới đến với Hội Thánh Truyền Giáo Hà Nội.">하노이 선교교회에 새로 오신 교우를 환영합니다.</span></li>
+            </ul>
+            <p class="news-source" data-vi="Nguồn: Bản tin Chúa Nhật 01/11/2026 (số 44).">출처: 2026년 11월 1일 주일 주보(제44호)</p>
+            <div class="btn-row"><a class="btn btn-outline btn-sm" href="assets/bulletins/2026-11-01.pdf" target="_blank" rel="noopener" data-vi="Xem toàn bộ bản tin (PDF)">주보 전체 보기 (PDF)</a></div>
+          </article>
+          <div class="news-feed" id="news-feed" aria-live="polite"></div>
+
           <article class="news-card">
             <p class="news-meta"><span class="news-tag" data-vi="Video ngắn bài giảng">주일설교 숏폼</span><time datetime="2026-11-01">2026.11.01</time></p>
             <h3 data-vi="Vì bận rộn, bạn có đang bỏ lỡ điều gì không?">바쁘다는 이유로 놓치고 있진 않나요?</h3>
@@ -777,6 +821,18 @@
             <h3 data-vi="Những người phục vụ">섬기는 분들</h3>
             <p data-vi="<strong>Ban Điều hành Hội Thánh</strong> · <span translate='no'>주명철, 황진철, 유신희, 조재덕, 신은혜</span>"><strong>교회 운영위원회</strong> · 주명철, 황진철, 유신희, 조재덕, 신은혜</p>
             <p data-vi="<strong>Các ban phục vụ</strong> · Ban Thờ phượng, Ban Tổng vụ, Ban Tài chính, Ban Giáo dục, Ban Truyền thông, Ban Thể thao…"><strong>교회 섬김</strong> · 예배부, 총무부, 재정부, 교육부, 미디어부, 체육부 등</p>
+          </div>
+          <div class="info-card serve-card reveal">
+            <h3 data-vi="Những người phục vụ trong tuần">섬기는 이들</h3>
+            <dl class="serve-list">
+              <div><dt data-vi="Dẫn ngợi khen">찬양 인도</dt><dd data-vi="<span translate='no'>안드레</span>">안드레</dd></div>
+              <div><dt data-vi="Chỉ huy ban hợp xướng">성가대 지휘</dt><dd data-vi="<span translate='no'>김미혜</span>">김미혜</dd></div>
+              <div><dt data-vi="Đệm đàn">반주</dt><dd data-vi="<span translate='no'>김미혜 · 천예지</span>">김미혜 · 천예지</dd></div>
+              <div><dt data-vi="Thanh thiếu niên">중고등부</dt><dd data-vi="<span translate='no'>안드레 목사</span>">안드레 목사</dd></div>
+              <div><dt data-vi="Thanh niên">청년부</dt><dd data-vi="<span translate='no'>이상훈 선생</span>">이상훈 선생</dd></div>
+              <div><dt data-vi="Thiếu nhi">유초등부</dt><dd data-vi="<span translate='no'>정선미 선생</span>">정선미 선생</dd></div>
+            </dl>
+            <p class="serve-note" data-vi="Theo bản tin Chúa Nhật 01/11/2026 (số 44). Danh sách có thể thay đổi.">2026년 11월 1일 주보 기준 · 변경될 수 있습니다.</p>
           </div>
         </div>
       </div>
@@ -862,6 +918,7 @@
           <figure class="church-gallery-card"><picture><source type="image/webp" srcset="assets/optimized/church-2026-10-28/worship-scene-640.webp 640w, assets/optimized/church-2026-10-28/worship-scene-1200.webp 1200w" sizes="(min-width:901px) 280px, 50vw"><img src="assets/church-2026-10-28/worship-scene.jpg" alt="수요예배 전경" data-vi-alt="Toàn cảnh buổi thờ phượng thứ Tư" width="1200" height="900" loading="lazy" decoding="async"></picture><figcaption data-vi="Thờ phượng thứ Tư · Toàn cảnh buổi nhóm">수요예배 · 예배 전경</figcaption></figure>
         </div>
         <p class="gallery-note" data-vi="Ảnh: Thờ phượng Chúa Nhật 25.10 và 01.11.2026 · Thứ Tư 28.10.2026 · Không gian Hội Thánh">사진: 2026년 10월 25일·11월 1일 주일예배 · 10월 28일 수요예배 · 교회 공간</p>
+        <div class="gallery-more"><a class="btn btn-outline" href="archive/?cat=photos" data-vi="Xem thêm ảnh trong thư viện">사진자료 더 보기</a></div>
       </div>
     </section>
 

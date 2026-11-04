@@ -96,6 +96,13 @@
     @media(min-width:520px){.brand span{position:static;width:auto;height:auto;overflow:visible;clip:auto}.header-links{gap:20px;font-size:.88rem}}
     @media(min-width:701px){.header-inner{min-height:76px}.hero{padding:68px 0 72px}.search{flex:0 1 420px}.count{flex:0 1 auto;margin-left:auto}.record{grid-template-columns:52px minmax(0,1fr) auto;gap:17px;padding:18px 22px}.file-icon{width:48px;height:48px;font-size:.67rem}.record-actions{grid-column:auto}.admin-guide{padding:26px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+      .popup-guide{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+    .popup-guide-title{font-size:1rem;margin:0 0 6px;color:var(--navy);font-size:1rem}
+    .photo-record{grid-template-columns:1fr}
+    .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+    .photo-grid a{position:relative;display:block;aspect-ratio:4/3;overflow:hidden;border-radius:12px;background:#e8eef0}
+    .photo-grid img{width:100%;height:100%;object-fit:cover;display:block}
+    .photo-grid span{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,30,46,.55);color:#fff;font-weight:800;font-size:1.1rem}
   </style>
   <script src="../assets/site.js" defer></script>
   <script src="../assets/archive-cms.js" defer></script>
@@ -144,6 +151,15 @@
         <li data-vi="Sửa hoặc xóa trong mục Tất cả bài viết, sau đó nhấn Làm mới trên trang này.">수정·삭제는 모든 글에서 처리하고, 이 페이지의 ‘새 자료 확인’을 누르면 목록이 갱신됩니다.</li>
       </ol>
       <div class="admin-links"><a href="https://hanoimissionchurchv2.wordpress.com/wp-admin/post-new.php" target="_blank" rel="noopener" data-vi="Đăng tài liệu mới">새 자료 등록</a><a href="https://hanoimissionchurchv2.wordpress.com/wp-admin/edit.php" target="_blank" rel="noopener" data-vi="Sửa / xóa tài liệu">자료 수정·삭제</a><a href="https://hanoimissionchurchv2.wordpress.com/wp-admin/users.php" target="_blank" rel="noopener" data-vi="Quản lý người dùng (quản trị viên)">사용자 권한 관리 (전체관리자)</a></div>
+      <div class="popup-guide"><h2 class="popup-guide-title" data-vi="Tạo thông báo cửa sổ nổi (pop-up)">공지 팝업 쉽게 만들기</h2>
+        <ol>
+          <li data-vi="Tạo bài viết mới và chọn chuyên mục “공지팝업”. Tiêu đề bài viết là tiêu đề pop-up.">새 글을 만들고 분류에서 <b>공지팝업</b>을 선택합니다. 글 제목이 팝업 제목이 됩니다.</li>
+          <li data-vi="Nhập nội dung vào phần thân bài. Ảnh đầu tiên hiển thị ở đầu pop-up, liên kết đầu tiên trở thành nút “Xem chi tiết”.">본문에 내용을 씁니다. 첫 사진은 팝업 위쪽에, 첫 링크는 ‘자세히 보기’ 버튼으로 표시됩니다.</li>
+          <li data-vi="Viết dòng “종료: 2026-11-10” để chỉ hiển thị đến ngày đó. Nếu không viết, pop-up hiển thị 14 ngày. Viết tiếng Việt dưới dòng ---VI---.">원하는 종료일은 <b>종료: 2026-11-10</b> 한 줄로 적습니다(없으면 14일간 표시). 베트남어는 <b>---VI---</b> 줄 아래에 적습니다.</li>
+          <li data-vi="Công bố bài viết. Chỉ bài mới nhất được hiển thị. Muốn gỡ, chuyển bài sang bản nháp hoặc thùng rác.">공개하면 홈페이지 첫 화면에 나타나고, 가장 최근 글 1개만 보입니다. 내리려면 글을 임시글이나 휴지통으로 바꿉니다.</li>
+        </ol>
+        <p class="admin-note" data-vi="Mẹo: chọn chuyên mục “교회소식” để hiển thị tin trên trang chủ, “사진자료” kèm ảnh để thêm album ảnh.">팁: 분류를 <b>교회소식</b>으로 하면 홈페이지 교회소식 카드에, <b>사진자료</b>로 하고 사진을 넣으면 자료실 사진 앨범에 표시됩니다.</p>
+      </div>
       <p class="admin-note" data-vi="Quan trọng: Tệp media WordPress dùng để xem công khai. Không tải dữ liệu cá nhân, số tài khoản hoặc tài liệu nội bộ. Khi gỡ tài liệu, hãy xóa cả bài viết lẫn tệp media.">중요: WordPress 미디어 파일은 공개 열람용입니다. 공개하면 안 되는 개인정보·계좌정보·내부자료는 업로드하지 마세요. 자료를 내릴 때는 글뿐 아니라 미디어 파일도 함께 삭제해야 합니다.</p>
     </details>
   </main>
