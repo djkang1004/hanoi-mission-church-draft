@@ -22,6 +22,7 @@ QUALITY = 78
 # 홈페이지에서 실제로 사용하는 사진만 등록합니다.
 IMAGES = [
     "assets/church-2026-10/hero-sermon-real-v4.jpg",
+    "assets/church-2026-11-01/hero-worship-1101.jpg",
     "assets/church-2026-10/sermon.jpg",
     "assets/church-2026-10/hall.jpg",
     "assets/church-2026-10/choir.jpg",
