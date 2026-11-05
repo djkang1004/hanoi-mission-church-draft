@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>최신 주보 | 하노이 선교교회</title>
+<style>body{margin:0;font-family:"Noto Sans KR","Malgun Gothic",sans-serif;background:#f7f3ea;color:#183044;display:grid;place-items:center;min-height:100vh;text-align:center;padding:24px}a{color:#102a43;font-weight:800}</style>
+</head>
+<body>
+<main>
+<h1>최신 주보를 불러오는 중입니다</h1>
+<p lang="vi">Đang mở bản tin mới nhất…</p>
+<p id="fallback" hidden>자동으로 열리지 않으면 <a href="../archive/?cat=bulletins">여기</a>를 눌러 주세요.</p>
+</main>
+<script>
+(async()=>{
+  const host='hanoimissionchurchv2.wordpress.com';
+  const fallback='assets/bulletins/2026-11-01.pdf';
+  const go=url=>location.replace(url);
+  try{
+    const res=await fetch('https://public-api.wordpress.com/rest/v1.1/sites/'+host+'/posts/?number=30&order_by=date&order=DESC&_='+Date.now(),{cache:'no-store'});
+    if(!res.ok) throw 0;
+    const posts=(await res.json()).posts||[];
+    const found=posts.map(p=>{
+      if(p.status!=='publish'||!Object.keys(p.categories||{}).includes('주보')) return null;
+      const title=String(p.title||'').replace(/<[^>]*>/g,'');
+      const m=title.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/);
+      const date=m?m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0'):String(p.date||'').slice(0,10);
+      const doc=new DOMParser().parseFromString(p.content||'','text/html');
+      const pdf=[...doc.querySelectorAll('a[href]')].map(a=>{try{return new URL(a.getAttribute('href'))}catch{return null}}).find(u=>u&&u.protocol==='https:'&&u.hostname===host&&u.pathname.startsWith('/wp-content/uploads/')&&u.pathname.toLowerCase().endsWith('.pdf'));
+      return pdf?{date,url:pdf.href,id:p.ID}:null;
+    }).filter(Boolean).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id)[0];
+    go(found?found.url:'../'+fallback);
+  }catch(e){
+    document.getElementById('fallback').hidden=false;
+    setTimeout(()=>go('../'+fallback),1500);
+  }
+})();
+</script>
+</body>
+</html>
