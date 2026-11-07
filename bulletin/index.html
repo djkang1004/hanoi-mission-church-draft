@@ -16,7 +16,7 @@
 <script>
 (async()=>{
   const host='hanoimissionchurchv2.wordpress.com';
-  const fallback='assets/bulletins/2026-11-01.pdf';
+  const fallback='assets/bulletins/2026-11-08.pdf';
   const go=url=>location.replace(url);
   try{
     const res=await fetch('https://public-api.wordpress.com/rest/v1.1/sites/'+host+'/posts/?number=30&order_by=date&order=DESC&_='+Date.now(),{cache:'no-store'});
@@ -40,3 +40,4 @@
 </script>
 </body>
 </html>
+
