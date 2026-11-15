@@ -161,7 +161,7 @@
   })();
 
   /* 공지 팝업 · 교회소식 자동 표시: WordPress 글의 분류만 고르면 홈페이지에 나타납니다.
-   * - 분류 '공지팝업': 가장 최근 공개 글 1개를 팝업으로 보여 줍니다. 본문에 '종료: 2026-11-10' 한 줄을 쓰면 그날까지만 표시하고,
+   * - 분류 '공지팝업': 유효한 공개 글을 최신순 최대 3개까지 하나씩 보여 줍니다. 본문에 '종료: 2026-11-10' 한 줄을 쓰면 그날까지만 표시하고,
    *   쓰지 않으면 게시 후 14일 동안 표시합니다. '---VI---' 줄 아래에 쓴 글은 베트남어 화면에서 보입니다. 첫 사진은 팝업 위쪽에, 첫 링크는 '자세히 보기' 버튼이 됩니다.
    * - 분류 '교회소식': 최신 글 최대 3개를 교회소식 카드로 보여 줍니다.
    * 연결에 실패하면 아무것도 바꾸지 않습니다. */
@@ -218,26 +218,34 @@
       if (feed.children.length) applyLang(root.lang);
     }
 
-    /* 공지 팝업 */
-    const pop = posts.find(p => inCat(p, '공지팝업'));
-    if (!pop) return;
-    const body = parseBody(pop);
-    const todayKey = new Date().toISOString().slice(0, 10);
-    const postDay = String(pop.date || '').slice(0, 10);
+    /* 공지 팝업: expiry and suppression are checked per post before capping the queue. */
     const vnToday = new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10);
-    const lastDay = body.end || new Date(new Date(postDay + 'T00:00:00Z').getTime() + 14 * 86400000).toISOString().slice(0, 10);
-    if (vnToday > lastDay) return;
-    const key = 'hmc-popup-' + pop.ID + '-' + String(pop.modified || '').slice(0, 19);
-    try { if (localStorage.getItem(key) === vnToday || sessionStorage.getItem(key)) return; } catch { /* 저장 불가 환경은 그대로 표시 */ }
-
+    const popupQueue = posts.filter(p => inCat(p, '공지팝업'))
+      .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || b.ID - a.ID)
+      .map(pop => {
+        const body = parseBody(pop);
+        const postDay = String(pop.date || '').slice(0, 10);
+        const defaultEnd = new Date(new Date(postDay + 'T00:00:00Z').getTime() + 14 * 86400000);
+        const lastDay = body.end || (!Number.isNaN(defaultEnd.getTime()) ? defaultEnd.toISOString().slice(0, 10) : '');
+        const key = 'hmc-popup-' + pop.ID + '-' + String(pop.modified || '').slice(0, 19);
+        if (!lastDay || vnToday > lastDay || postDay > vnToday) return null;
+        try { if (localStorage.getItem(key) === vnToday || sessionStorage.getItem(key)) return null; } catch { /* storage unavailable */ }
+        return { pop, body, key };
+      }).filter(Boolean).slice(0, 3);
+    if (!popupQueue.length) return;
+    const opener = document.activeElement;
+    function showNextPopup() {
+      const next = popupQueue.shift();
+      if (!next) { if (opener && opener.focus) opener.focus(); return; }
+      const { pop, body, key } = next;
     const wrap = document.createElement('div');
     wrap.className = 'hmc-popup'; wrap.hidden = true;
     const box = document.createElement('div');
-    box.className = 'hmc-popup-box'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'hmc-popup-title');
+    box.className = 'hmc-popup-box'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'hmc-popup-title-' + pop.ID);
     if (body.img) { const im = document.createElement('img'); im.src = body.img; im.alt = ''; im.loading = 'eager'; box.appendChild(im); }
     const inner = document.createElement('div'); inner.className = 'hmc-popup-body';
     const tag = document.createElement('p'); tag.className = 'hmc-popup-tag';
-    const h2 = document.createElement('h2'); h2.id = 'hmc-popup-title';
+    const h2 = document.createElement('h2'); h2.id = 'hmc-popup-title-' + pop.ID;
     const text = document.createElement('div');
     inner.append(tag, h2, text);
     const actions = document.createElement('div'); actions.className = 'hmc-popup-actions';
@@ -261,17 +269,22 @@
     };
     const dismiss = remember => {
       try { if (remember) localStorage.setItem(key, vnToday); else sessionStorage.setItem(key, '1'); } catch { /* 무시 */ }
-      wrap.hidden = true; document.removeEventListener('keydown', onKey);
-      if (opener && opener.focus) opener.focus();
+      if (dismissed) return;
+      dismissed = true;
+      wrap.remove(); document.removeEventListener('keydown', onKey);
+      document.removeEventListener('hmc:langchange', render);
+      showNextPopup();
     };
     const onKey = e => { if (e.key === 'Escape') dismiss(false); };
-    const opener = document.activeElement;
+    let dismissed = false;
     hideToday.addEventListener('click', () => dismiss(true));
     close.addEventListener('click', () => dismiss(false));
     wrap.addEventListener('click', e => { if (e.target === wrap) dismiss(false); });
     document.addEventListener('hmc:langchange', render);
     render();
-    setTimeout(() => { wrap.hidden = false; document.addEventListener('keydown', onKey); close.focus(); }, 700);
+    wrap.hidden = false; document.addEventListener('keydown', onKey); close.focus();
+    }
+    setTimeout(showNextPopup, 700);
   })();
 
   /* 기간 한정 공지 띠: data-notice-until 시각 전까지만 표시 */

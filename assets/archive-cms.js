@@ -86,6 +86,8 @@
     const title = String(post.title || '').replace(/<[^>]*>/g, '').trim();
     const match = title.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/);
     const date = match ? `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}` : String(post.date || '').slice(0, 10);
+    // This video has a dedicated same-origin viewer; leave other materials unchanged.
+    if (post.ID === 260) return { id: post.ID, title: '하노이 선교교회 주일학교 | 2026년 한 해를 돌아보며, 하나님 감사합니다', date, category, url: new URL('/archive/2026-11-15-sunday-school.html', location.origin).href, ext: 'mp4', downloadable: false };
     if (category === 'photos') {
       const images = imageUrls(post.content);
       return images.length ? { id: post.ID, title, date, category, url: images[0], ext: 'photo', downloadable: true, images } : null;
