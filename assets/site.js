@@ -191,7 +191,7 @@
       lines.forEach(line => {
         const m = line.match(/^(?:종료|마감)\s*[:：]\s*(20\d{2})[-.](\d{1,2})[-.](\d{1,2})/);
         if (m) { end = m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0'); return; }
-        if (/^-{2,}\s*VI\s*-{2,}$/i.test(line)) { target = vi; return; }
+        if (/^[-–—]+\s*VI\s*[-–—]+$/i.test(line)) { target = vi; return; }
         target.push(line);
       });
       return { img: img && img.href, link: link && link.href, end, ko, vi };
