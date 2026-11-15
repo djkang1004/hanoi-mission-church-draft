@@ -234,12 +234,14 @@
       }).filter(Boolean).slice(0, 3);
     if (!popupQueue.length) return;
     const opener = document.activeElement;
-    function showNextPopup() {
-      const next = popupQueue.shift();
-      if (!next) { if (opener && opener.focus) opener.focus(); return; }
+    const stack = document.createElement('div'); stack.className = 'hmc-popup-stack';
+    const row = document.createElement('div'); row.className = 'hmc-popup-row'; stack.appendChild(row);
+    document.body.appendChild(stack);
+    function afterDismiss() { if (!row.children.length) { stack.remove(); if (opener && opener.focus) opener.focus(); } }
+    function showPopup(next) {
       const { pop, body, key } = next;
     const wrap = document.createElement('div');
-    wrap.className = 'hmc-popup'; wrap.hidden = true;
+    wrap.className = 'hmc-popup-item'; wrap.hidden = true;
     const box = document.createElement('div');
     box.className = 'hmc-popup-box'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'hmc-popup-title-' + pop.ID);
     if (body.img) { const im = document.createElement('img'); im.src = body.img; im.alt = ''; im.loading = 'eager'; box.appendChild(im); }
@@ -254,7 +256,7 @@
     const close = document.createElement('button'); close.type = 'button'; close.className = 'primary';
     if (more) actions.appendChild(more);
     actions.append(hideToday, close);
-    box.append(inner, actions); wrap.appendChild(box); document.body.appendChild(wrap);
+    box.append(inner, actions); wrap.appendChild(box); row.appendChild(wrap);
     const title = textOf(pop.title);
     const titleVi = (title.match(/\|\s*(.+)$/) || [])[1];
     const render = () => {
@@ -273,7 +275,7 @@
       dismissed = true;
       wrap.remove(); document.removeEventListener('keydown', onKey);
       document.removeEventListener('hmc:langchange', render);
-      showNextPopup();
+      afterDismiss();
     };
     const onKey = e => { if (e.key === 'Escape') dismiss(false); };
     let dismissed = false;
@@ -282,9 +284,9 @@
     wrap.addEventListener('click', e => { if (e.target === wrap) dismiss(false); });
     document.addEventListener('hmc:langchange', render);
     render();
-    wrap.hidden = false; document.addEventListener('keydown', onKey); close.focus();
+    wrap.hidden = false; document.addEventListener('keydown', onKey); if (row.children.length === 1) close.focus();
     }
-    setTimeout(showNextPopup, 700);
+    stack.hidden = true; setTimeout(() => { popupQueue.splice(0).forEach(showPopup); stack.hidden = !row.children.length; if (stack.hidden) stack.remove(); }, 700);
   })();
 
   /* 기간 한정 공지 띠: data-notice-until 시각 전까지만 표시 */
