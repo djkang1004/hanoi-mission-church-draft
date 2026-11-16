@@ -145,14 +145,14 @@
     meta.append(small, title);
     const grid = document.createElement('div');
     grid.className = 'photo-grid';
-    r.images.slice(0, 8).forEach((src, i) => {
+    r.images.slice(0, 12).forEach((src, i) => {
       const a = document.createElement('a');
       a.href = src; a.target = '_blank'; a.rel = 'noopener noreferrer';
       a.setAttribute('aria-label', titleOf(r) + ' ' + (i + 1));
       const im = document.createElement('img');
       im.src = r.local ? src : src + '?w=480'; im.alt = ''; im.loading = 'lazy'; im.decoding = 'async';
       a.appendChild(im);
-      if (i === 7 && r.images.length > 8) { const more = document.createElement('span'); more.textContent = '+' + (r.images.length - 8); a.appendChild(more); }
+      if (i === 11 && r.images.length > 12) { const more = document.createElement('span'); more.textContent = '+' + (r.images.length - 8); a.appendChild(more); }
       grid.appendChild(a);
     });
     card.append(meta, grid);
