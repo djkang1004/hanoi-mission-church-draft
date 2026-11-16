@@ -1,0 +1,26 @@
+name: Convert Sunday school video (one-time)
+on:
+  push:
+    paths:
+      - assets/source-school-20261115-hevc.mp4
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  transcode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Transcode HEVC to browser-compatible H.264
+        run: |
+          ffmpeg -version >/dev/null 2>&1 || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+          ffmpeg -hide_banner -loglevel error -y -i assets/source-school-20261115-hevc.mp4 -vf scale=-2:960 -c:v libx264 -preset veryfast -crf 25 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart assets/sunday-school-20261115-activities.mp4
+          ffmpeg -hide_banner -loglevel error -y -ss 00:00:30 -i assets/sunday-school-20261115-activities.mp4 -frames:v 1 -vf scale=360:-2 assets/sunday-school-20261115-preview.jpg
+      - name: Commit converted video and remove source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm assets/source-school-20261115-hevc.mp4
+          git add assets/sunday-school-20261115-activities.mp4 assets/sunday-school-20261115-preview.jpg
+          git commit -m "Convert Sunday school activity video for web"
+          git push
