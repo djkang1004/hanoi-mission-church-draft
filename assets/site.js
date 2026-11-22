@@ -160,6 +160,67 @@
     } catch { /* 연결 실패 시 기본 카드를 유지합니다 */ }
   })();
 
+  /* 이번 주 교회 소식 자동 반영: 가장 최근 주보 글의 '[교회소식]' 항목을 카드에 표시합니다.
+   * 주보 글 본문에 '[교회소식]' 줄 아래 '1. 내용' 형식으로 쓰고, '---VI---' 줄 아래에 같은 순서로 베트남어를 씁니다.
+   * 최신 주보 글에 항목이 없거나 연결에 실패하면 HTML에 적어 둔 내용을 그대로 둡니다. */
+  (async () => {
+    const card = document.querySelector('.news-weekly');
+    if (!card) return;
+    const host = 'hanoimissionchurchv2.wordpress.com';
+    try {
+      const res = await fetch('https://public-api.wordpress.com/rest/v1.1/sites/' + host + '/posts/?number=20&order_by=date&order=DESC&_=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return;
+      const posts = (await res.json()).posts || [];
+      const list = posts.map(post => {
+        if (post.status !== 'publish' || !Object.keys(post.categories || {}).includes('주보')) return null;
+        const title = String(post.title || '').replace(/<[^>]*>/g, '').trim();
+        const m = title.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/) || title.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월\s*([12]\d|3[01]|0?[1-9])\s*일/);
+        const date = m ? m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0') : String(post.date || '').slice(0, 10);
+        return /^\d{4}-\d{2}-\d{2}$/.test(date) ? { post, title, date } : null;
+      }).filter(Boolean).sort((a, b) => b.date.localeCompare(a.date) || b.post.ID - a.post.ID);
+      const latest = list[0];
+      if (!latest) return;
+      const timeEl = card.querySelector('time');
+      if (timeEl && latest.date < (timeEl.getAttribute('datetime') || '')) return;
+      const doc = new DOMParser().parseFromString(latest.post.content || '', 'text/html');
+      const lines = [...doc.body.querySelectorAll('p,li,h2,h3,h4')].map(n => n.textContent.trim()).filter(Boolean);
+      const at = lines.findIndex(l => /^\[\s*교회\s*소식\s*\]$/.test(l));
+      if (at < 0) return;
+      const ko = [], vi = [];
+      let target = ko;
+      lines.slice(at + 1).forEach(l => {
+        if (/^[-–—]+\s*VI\s*[-–—]+$/i.test(l)) { target = vi; return; }
+        const m = l.match(/^(\d+)\s*[.)]\s*(.+)$/);
+        if (m) target.push(m[2]);
+      });
+      if (!ko.length) return;
+      const setBi = (el, koText, viText) => {
+        if (!el) return;
+        if (viText) el.setAttribute('data-vi', viText); else el.removeAttribute('data-vi');
+        koHtml.set(el, koText);
+        el.textContent = root.lang === 'vi' && viText ? viText : koText;
+      };
+      const ul = card.querySelector('.week-list');
+      if (ul) {
+        ul.replaceChildren(...ko.map((text, i) => {
+          const li = document.createElement('li');
+          const b = document.createElement('b'); b.textContent = (i + 1) + '.';
+          const span = document.createElement('span'); li.append(b, span);
+          setBi(span, text, vi[i] || '');
+          return li;
+        }));
+      }
+      const [y, mo, d] = latest.date.split('-');
+      const issue = (latest.title.match(/제\s*(\d+)\s*호/) || [])[1];
+      if (timeEl) { timeEl.setAttribute('datetime', latest.date); setBi(timeEl, y + '.' + mo + '.' + d + ' 주보', 'Bản tin ' + d + '.' + mo + '.' + y); }
+      setBi(card.querySelector('.news-source'), '출처: ' + y + '년 ' + Number(mo) + '월 ' + Number(d) + '일 주일 주보' + (issue ? '(제' + issue + '호)' : ''), 'Nguồn: Bản tin Chúa Nhật ' + d + '/' + mo + '/' + y + (issue ? ' (số ' + issue + ')' : '') + '.');
+      const pdf = [...doc.querySelectorAll('a[href]')].map(a => { try { return new URL(a.getAttribute('href')); } catch { return null; } })
+        .find(u => u && u.protocol === 'https:' && u.hostname === host && u.pathname.startsWith('/wp-content/uploads/') && u.pathname.toLowerCase().endsWith('.pdf'));
+      const link = card.querySelector('.btn-row a');
+      if (pdf && link) link.href = pdf.href;
+    } catch { /* 연결 실패 시 기본 카드를 유지합니다 */ }
+  })();
+
   /* 공지 팝업 · 교회소식 자동 표시: WordPress 글의 분류만 고르면 홈페이지에 나타납니다.
    * - 분류 '공지팝업': 유효한 공개 글을 최신순 최대 3개까지 하나씩 보여 줍니다. 본문에 '종료: 2026-11-10' 한 줄을 쓰면 그날까지만 표시하고,
    *   쓰지 않으면 게시 후 14일 동안 표시합니다. '---VI---' 줄 아래에 쓴 글은 베트남어 화면에서 보입니다. 첫 사진은 팝업 위쪽에, 첫 링크는 '자세히 보기' 버튼이 됩니다.
