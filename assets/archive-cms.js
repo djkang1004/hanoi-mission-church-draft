@@ -266,9 +266,7 @@
       records = posts.map(parsePost).filter(Boolean);
       try {
         const drive = await driveRecords();
-        const keys = new Set(drive.filter(r => r.category !== 'photos').map(r => r.category + r.date));
-        const pkeys = new Set(drive.filter(r => r.category === 'photos').map(r => r.date));
-        records = [...drive, ...records.filter(r => r.category === 'bulletins' ? !keys.has('bulletins' + r.date) : true)];
+        records = [...drive, ...records.filter(r => !['bulletins', 'sermons', 'study'].includes(r.category))];
       } catch (e) { console.warn('Drive materials unavailable:', e.message); }
     } catch (err) {
       failed = true;
