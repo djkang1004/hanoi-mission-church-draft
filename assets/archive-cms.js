@@ -109,6 +109,21 @@
     return LOCAL_PHOTOS.map((a, i) => ({ id: -1000 - i, title: a.title, titleVi: a.titleVi, date: a.date, category: 'photos', ext: 'photo', downloadable: true, local: true,
       images: a.files.map(f => new URL('../' + f, location.href).href), url: new URL('../' + a.files[0], location.href).href }));
   }
+
+  /* Google Drive 주보 폴더: 파일을 올리면 게시, 지우면 내려갑니다. 파일명에 날짜(예: 2026-11-29 주일 주보 제48호.pdf)를 넣으세요. */
+  const DRIVE_KEY = 'AIzaSyCtgFb2LjAAYXJOpIHFHUNfVNqpYyBwdtw';
+  const DRIVE_BULLETIN_FOLDER = '10knIugD2GlEy8KoMrYHBautLHuHKnzB_';
+  async function driveBulletins() {
+    const q = encodeURIComponent("'" + DRIVE_BULLETIN_FOLDER + "' in parents and trashed=false and mimeType='application/pdf'");
+    const res = await fetch('https://www.googleapis.com/drive/v3/files?pageSize=200&orderBy=name%20desc&fields=files(id,name,modifiedTime)&q=' + q + '&key=' + DRIVE_KEY, { cache: 'no-store' });
+    if (!res.ok) throw Error('Drive API ' + res.status);
+    const data = await res.json();
+    return (data.files || []).map((f, i) => {
+      const m = f.name.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/);
+      const date = m ? m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0') : String(f.modifiedTime || '').slice(0, 10);
+      return { id: 100000 + i, title: f.name.replace(/\.[^.]+$/, ''), date, category: 'bulletins', url: 'https://drive.google.com/file/d/' + f.id + '/view', dl: 'https://drive.google.com/uc?export=download&id=' + f.id, ext: 'pdf', downloadable: true, drive: true };
+    });
+  }
   const sortRecords = list => list.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 
   function renderFilters() {
@@ -179,7 +194,7 @@
     const viewHref = r.category === 'sermons' && isSlides && r.id > 0 ? `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(r.url)}` : r.url;
     actions.appendChild(makeLink(tr('view'), viewHref, `${titleOf(r)} ${tr('view')}`));
     if (r.downloadable && r.category !== 'sermons') {
-      const dl = makeLink(tr('download'), r.url, `${titleOf(r)} ${tr('download')}`);
+      const dl = makeLink(tr('download'), r.dl || r.url, `${titleOf(r)} ${tr('download')}`);
       if (r.ext === 'pdf') dl.title = tr('pdfHint');
       if (r.id < 0) dl.setAttribute('download', '');
       actions.appendChild(dl);
@@ -234,6 +249,11 @@
         if (posts.length >= data.found || data.posts.length < 100) break;
       }
       records = posts.map(parsePost).filter(Boolean);
+      try {
+        const drive = await driveBulletins();
+        const dates = new Set(drive.map(r => r.date));
+        records = [...drive, ...records.filter(r => r.category !== 'bulletins' || !dates.has(r.date))];
+      } catch (e) { console.warn('Drive bulletins unavailable:', e.message); }
     } catch (err) {
       failed = true;
       console.warn('Church library unavailable:', err.message);
