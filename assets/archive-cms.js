@@ -266,7 +266,7 @@
       records = posts.map(parsePost).filter(Boolean);
       try {
         const drive = await driveRecords();
-        records = [...drive, ...records.filter(r => !['bulletins', 'sermons', 'study'].includes(r.category))];
+        records = [...drive, ...records.filter(r => !['bulletins', 'sermons', 'study', 'photos'].includes(r.category))];
       } catch (e) { console.warn('Drive materials unavailable:', e.message); }
     } catch (err) {
       failed = true;
