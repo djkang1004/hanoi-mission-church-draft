@@ -119,179 +119,142 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && quick.classList.contains('open')) { setQuick(false); qBtn.focus(); } });
   }
 
-  /* 최신 주보 자동 반영: 교회소식의 주보 카드를 WordPress 자료실의 가장 최근 주보로 바꿉니다.
-   * WordPress에 연결하지 못하거나 더 새로운 주보가 없으면 HTML에 적어 둔 카드를 그대로 둡니다.
-   * 주보 글 제목에 '제45호'처럼 적으면 카드 제목에도 호수가 표시됩니다. */
+  /* 홈페이지 자동 반영(Google Drive·스프레드시트): 주보 카드, 이번 주 교회 소식, 교회소식 카드, 공지 팝업을 Google 스프레드시트와 Drive 주보 폴더에서 읽어 옵니다.
+   * - 스프레드시트 '하노이선교교회_공지·교회소식 (홈페이지)'의 한 줄이 한 항목입니다. 구분: 팝업 / 주간소식 / 소식. 게시 칸에 X를 쓰면 숨깁니다.
+   * - 팝업: 날짜(게시일)~종료일 동안 표시, 종료일이 비면 게시 후 14일. 줄바꿈은 ' // '로 씁니다. 링크는 '자세히 보기', 이미지는 팝업 위쪽 사진.
+   * - 주간소식: 같은 날짜의 줄들을 한 주 소식 목록으로 표시(가장 최근 날짜). 제목 칸의 '제47호'는 호수 표시.
+   * - 소식: 최신 3개를 교회소식 카드로 표시.
+   * - 주보 카드: Drive 주보 폴더의 가장 최근 PDF.
+   * 연결에 실패하면 HTML에 적어 둔 내용을 그대로 둡니다. */
   (async () => {
-    const card = document.getElementById('bulletin-card');
-    if (!card) return;
-    const pdfLink = document.getElementById('bulletin-pdf');
-    const timeEl = card.querySelector('time');
-    const titleEl = card.querySelector('h3');
-    const host = 'hanoimissionchurchv2.wordpress.com';
-    const api = 'https://public-api.wordpress.com/rest/v1.1/sites/' + host + '/posts/';
+    const DKEY = 'AIzaSyCtgFb2LjAAYXJOpIHFHUNfVNqpYyBwdtw';
+    const SHEET = '1sS-JNn48CHRFekDk-qMgsFaowEF7Z-zunsSB5yoGlhE';
+    const BULLETIN_FOLDER = '10knIugD2GlEy8KoMrYHBautLHuHKnzB_';
+    const ref = { cache: 'no-store' };
+    const parseCsv = text => {
+      const rows = []; let row = [], cell = '', q = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+        else if (c === '"') q = true;
+        else if (c === ',') { row.push(cell); cell = ''; }
+        else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+        else if (c !== '\r') cell += c;
+      }
+      if (cell || row.length) { row.push(cell); rows.push(row); }
+      return rows;
+    };
+    const normDate = s => { const m = String(s || '').match(/(20\d{2})\D+(\d{1,2})\D+(\d{1,2})/); return m ? m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0') : ''; };
+    let items = [];
     try {
-      const res = await fetch(api + '?number=20&order_by=date&order=DESC&_=' + Date.now(), { cache: 'no-store' });
-      if (!res.ok) return;
-      const data = await res.json();
-      const found = (data.posts || []).map(post => {
-        if (post.status !== 'publish' || !Object.keys(post.categories || {}).includes('주보')) return null;
-        const title = String(post.title || '').replace(/<[^>]*>/g, '').trim();
-        const m = title.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/);
-        const date = m ? m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0') : String(post.date || '').slice(0, 10);
-        const doc = new DOMParser().parseFromString(post.content || '', 'text/html');
-        const pdf = [...doc.querySelectorAll('a[href]')].map(a => { try { return new URL(a.getAttribute('href')); } catch { return null; } })
-          .find(u => u && u.protocol === 'https:' && u.hostname === host && u.pathname.startsWith('/wp-content/uploads/') && u.pathname.toLowerCase().endsWith('.pdf'));
-        const issue = (title.match(/제\s*(\d+)\s*호/) || [])[1];
-        return pdf && /^\d{4}-\d{2}-\d{2}$/.test(date) ? { date, url: pdf.href, issue, id: post.ID } : null;
-      }).filter(Boolean).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)[0];
-      const current = timeEl.getAttribute('datetime') || '';
-      if (!found || found.date < current) return;
-      if (!found.issue && found.date === current) found.issue = (titleEl.textContent.match(/제\s*(\d+)\s*호/) || [])[1];
-      const [y, mo, d] = found.date.split('-');
-      const ko = Number(mo) + '월 ' + Number(d) + '일 주일 주보' + (found.issue ? ' (제' + found.issue + '호)' : '');
-      const vi = 'Bản tin Chúa Nhật ' + d + '/' + mo + '/' + y + (found.issue ? ' (số ' + found.issue + ')' : '');
-      timeEl.setAttribute('datetime', found.date);
-      timeEl.textContent = y + '.' + mo + '.' + d;
-      titleEl.setAttribute('data-vi', vi);
-      koHtml.set(titleEl, ko);
-      titleEl.textContent = root.lang === 'vi' ? vi : ko;
-      if (pdfLink) pdfLink.href = found.url;
-    } catch { /* 연결 실패 시 기본 카드를 유지합니다 */ }
-  })();
+      const res = await fetch('https://www.googleapis.com/drive/v3/files/' + SHEET + '/export?mimeType=text%2Fcsv&key=' + DKEY + '&_=' + Date.now(), ref);
+      if (res.ok) {
+        const t = parseCsv(await res.text());
+        const head = t.shift() || [];
+        const col = n => head.indexOf(n);
+        const c = { kind: col('구분'), date: col('날짜'), title: col('제목'), titleVi: col('제목(VI)'), ko: col('내용'), vi: col('내용(VI)'), end: col('종료일'), link: col('링크'), img: col('이미지'), on: col('게시') };
+        items = t.map((r, i) => ({ n: i, kind: (r[c.kind] || '').trim(), date: normDate(r[c.date]), title: (r[c.title] || '').trim(), titleVi: (r[c.titleVi] || '').trim(), ko: (r[c.ko] || '').trim(), vi: (r[c.vi] || '').trim(), end: normDate(r[c.end]), link: (r[c.link] || '').trim(), img: (r[c.img] || '').trim(), on: (r[c.on] || '').trim().toUpperCase() }))
+          .filter(x => x.kind && x.on !== 'X' && x.on !== 'N' && x.on !== '아니오');
+      }
+    } catch { /* 연결 실패 */ }
+    let bulletins = [];
+    try {
+      const q = encodeURIComponent("'" + BULLETIN_FOLDER + "' in parents and trashed=false and mimeType='application/pdf'");
+      const res = await fetch('https://www.googleapis.com/drive/v3/files?pageSize=100&fields=files(id,name,modifiedTime)&q=' + q + '&key=' + DKEY, ref);
+      if (res.ok) bulletins = ((await res.json()).files || []).map(f => ({ date: normDate(f.name) || String(f.modifiedTime || '').slice(0, 10), issue: (f.name.match(/제\s*(\d+)\s*호/) || [])[1], url: 'https://drive.google.com/file/d/' + f.id + '/view', name: f.name }))
+        .sort((a, b) => b.date.localeCompare(a.date) || b.name.localeCompare(a.name));
+    } catch { /* 연결 실패 */ }
+    const textOf = html => String(html || '').replace(/<[^>]*>/g, '').trim();
+    const split = s => s.split(/\s*\/\/\s*/).map(x => x.trim()).filter(Boolean);
+    const setBi = (el, koText, viText) => {
+      if (!el) return;
+      if (viText) el.setAttribute('data-vi', viText); else el.removeAttribute('data-vi');
+      koHtml.set(el, koText);
+      el.textContent = root.lang === 'vi' && viText ? viText : koText;
+    };
 
-  /* 이번 주 교회 소식 자동 반영: 가장 최근 주보 글의 '[교회소식]' 항목을 카드에 표시합니다.
-   * 주보 글 본문에 '[교회소식]' 줄 아래 '1. 내용' 형식으로 쓰고, '---VI---' 줄 아래에 같은 순서로 베트남어를 씁니다.
-   * 최신 주보 글에 항목이 없거나 연결에 실패하면 HTML에 적어 둔 내용을 그대로 둡니다. */
-  (async () => {
-    const card = document.querySelector('.news-weekly');
-    if (!card) return;
-    const host = 'hanoimissionchurchv2.wordpress.com';
-    try {
-      const res = await fetch('https://public-api.wordpress.com/rest/v1.1/sites/' + host + '/posts/?number=20&order_by=date&order=DESC&_=' + Date.now(), { cache: 'no-store' });
-      if (!res.ok) return;
-      const posts = (await res.json()).posts || [];
-      const list = posts.map(post => {
-        if (post.status !== 'publish' || !Object.keys(post.categories || {}).includes('주보')) return null;
-        const title = String(post.title || '').replace(/<[^>]*>/g, '').trim();
-        const m = title.match(/(20\d{2})[-_.](0?[1-9]|1[0-2])[-_.]([12]\d|3[01]|0?[1-9])/) || title.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월\s*([12]\d|3[01]|0?[1-9])\s*일/);
-        const date = m ? m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0') : String(post.date || '').slice(0, 10);
-        return /^\d{4}-\d{2}-\d{2}$/.test(date) ? { post, title, date } : null;
-      }).filter(Boolean).sort((a, b) => b.date.localeCompare(a.date) || b.post.ID - a.post.ID);
-      const latest = list[0];
-      if (!latest) return;
-      const timeEl = card.querySelector('time');
-      if (timeEl && latest.date < (timeEl.getAttribute('datetime') || '')) return;
-      const doc = new DOMParser().parseFromString(latest.post.content || '', 'text/html');
-      const lines = [...doc.body.querySelectorAll('p,li,h2,h3,h4')].map(n => n.textContent.trim()).filter(Boolean);
-      const at = lines.findIndex(l => /^\[\s*교회\s*소식\s*\]$/.test(l));
-      if (at < 0) return;
-      const ko = [], vi = [];
-      let target = ko;
-      lines.slice(at + 1).forEach(l => {
-        if (/^[-–—]+\s*VI\s*[-–—]+$/i.test(l)) { target = vi; return; }
-        const m = l.match(/^(\d+)\s*[.)]\s*(.+)$/);
-        if (m) target.push(m[2]);
-      });
-      if (!ko.length) return;
-      const setBi = (el, koText, viText) => {
-        if (!el) return;
-        if (viText) el.setAttribute('data-vi', viText); else el.removeAttribute('data-vi');
-        koHtml.set(el, koText);
-        el.textContent = root.lang === 'vi' && viText ? viText : koText;
-      };
-      const ul = card.querySelector('.week-list');
-      if (ul) {
-        ul.replaceChildren(...ko.map((text, i) => {
+    /* 최신 주보 카드 */
+    const bcard = document.getElementById('bulletin-card');
+    if (bcard && bulletins[0]) {
+      const found = bulletins[0];
+      const pdfLink = document.getElementById('bulletin-pdf');
+      const timeEl = bcard.querySelector('time');
+      const titleEl = bcard.querySelector('h3');
+      const current = timeEl.getAttribute('datetime') || '';
+      if (found.date >= current) {
+        const [y, mo, d] = found.date.split('-');
+        const ko = Number(mo) + '월 ' + Number(d) + '일 주일 주보' + (found.issue ? ' (제' + found.issue + '호)' : '');
+        const vi = 'Bản tin Chúa Nhật ' + d + '/' + mo + '/' + y + (found.issue ? ' (số ' + found.issue + ')' : '');
+        timeEl.setAttribute('datetime', found.date);
+        timeEl.textContent = y + '.' + mo + '.' + d;
+        titleEl.setAttribute('data-vi', vi);
+        koHtml.set(titleEl, ko);
+        titleEl.textContent = root.lang === 'vi' ? vi : ko;
+        if (pdfLink) pdfLink.href = found.url;
+      }
+    }
+
+    /* 이번 주 교회 소식 */
+    const weekly = document.querySelector('.news-weekly');
+    const wk = items.filter(x => x.kind === '주간소식' && x.date && x.ko);
+    if (weekly && wk.length) {
+      const latestDate = wk.map(x => x.date).sort().pop();
+      const list = wk.filter(x => x.date === latestDate);
+      const timeEl = weekly.querySelector('time');
+      if (!(timeEl && latestDate < (timeEl.getAttribute('datetime') || ''))) {
+        const ul = weekly.querySelector('.week-list');
+        if (ul) ul.replaceChildren(...list.map((x, i) => {
           const li = document.createElement('li');
           const b = document.createElement('b'); b.textContent = (i + 1) + '.';
           const span = document.createElement('span'); li.append(b, span);
-          setBi(span, text, vi[i] || '');
+          setBi(span, x.ko, x.vi);
           return li;
         }));
+        const [y, mo, d] = latestDate.split('-');
+        const issue = ((list.map(x => x.title).find(t => /\d+\s*호/.test(t)) || '').match(/(\d+)\s*호/) || [])[1];
+        if (timeEl) { timeEl.setAttribute('datetime', latestDate); setBi(timeEl, y + '.' + mo + '.' + d + ' 주보', 'Bản tin ' + d + '.' + mo + '.' + y); }
+        setBi(weekly.querySelector('.news-source'), '출처: ' + y + '년 ' + Number(mo) + '월 ' + Number(d) + '일 주일 주보' + (issue ? '(제' + issue + '호)' : ''), 'Nguồn: Bản tin Chúa Nhật ' + d + '/' + mo + '/' + y + (issue ? ' (số ' + issue + ')' : '') + '.');
+        const pdf = bulletins.find(b => b.date === latestDate);
+        const link = weekly.querySelector('.btn-row a');
+        if (pdf && link) link.href = pdf.url;
       }
-      const [y, mo, d] = latest.date.split('-');
-      const issue = (latest.title.match(/제\s*(\d+)\s*호/) || [])[1];
-      if (timeEl) { timeEl.setAttribute('datetime', latest.date); setBi(timeEl, y + '.' + mo + '.' + d + ' 주보', 'Bản tin ' + d + '.' + mo + '.' + y); }
-      setBi(card.querySelector('.news-source'), '출처: ' + y + '년 ' + Number(mo) + '월 ' + Number(d) + '일 주일 주보' + (issue ? '(제' + issue + '호)' : ''), 'Nguồn: Bản tin Chúa Nhật ' + d + '/' + mo + '/' + y + (issue ? ' (số ' + issue + ')' : '') + '.');
-      const pdf = [...doc.querySelectorAll('a[href]')].map(a => { try { return new URL(a.getAttribute('href')); } catch { return null; } })
-        .find(u => u && u.protocol === 'https:' && u.hostname === host && u.pathname.startsWith('/wp-content/uploads/') && u.pathname.toLowerCase().endsWith('.pdf'));
-      const link = card.querySelector('.btn-row a');
-      if (pdf && link) link.href = pdf.href;
-    } catch { /* 연결 실패 시 기본 카드를 유지합니다 */ }
-  })();
-
-  /* 공지 팝업 · 교회소식 자동 표시: WordPress 글의 분류만 고르면 홈페이지에 나타납니다.
-   * - 분류 '공지팝업': 유효한 공개 글을 최신순 최대 3개까지 하나씩 보여 줍니다. 본문에 '종료: 2026-11-10' 한 줄을 쓰면 그날까지만 표시하고,
-   *   쓰지 않으면 게시 후 14일 동안 표시합니다. '---VI---' 줄 아래에 쓴 글은 베트남어 화면에서 보입니다. 첫 사진은 팝업 위쪽에, 첫 링크는 '자세히 보기' 버튼이 됩니다.
-   * - 분류 '교회소식': 최신 글 최대 3개를 교회소식 카드로 보여 줍니다.
-   * 연결에 실패하면 아무것도 바꾸지 않습니다. */
-  (async () => {
-    const feed = document.getElementById('news-feed');
+    }
     if (location.pathname.includes('/archive')) return;
-    const host = 'hanoimissionchurchv2.wordpress.com';
-    let posts = [];
-    try {
-      const res = await fetch('https://public-api.wordpress.com/rest/v1.1/sites/' + host + '/posts/?number=30&order_by=date&order=DESC&_=' + Date.now(), { cache: 'no-store' });
-      if (!res.ok) return;
-      posts = (await res.json()).posts || [];
-    } catch { return; }
-    const inCat = (post, name) => post.status === 'publish' && Object.keys(post.categories || {}).includes(name);
-    const textOf = html => String(html || '').replace(/<[^>]*>/g, '').trim();
-    const parseBody = post => {
-      const doc = new DOMParser().parseFromString(post.content || '', 'text/html');
-      const img = [...doc.querySelectorAll('img[src]')].map(i => { try { return new URL(i.getAttribute('src')); } catch { return null; } })
-        .find(u => u && u.protocol === 'https:' && /(^|\.)(wordpress|wp)\.com$/.test(u.hostname));
-      const link = [...doc.querySelectorAll('a[href]')].map(a => { try { return new URL(a.getAttribute('href')); } catch { return null; } })
-        .find(u => u && u.protocol === 'https:' && !/\.(jpe?g|png|webp|gif)$/i.test(u.pathname));
-      doc.querySelectorAll('figure,img,script,style').forEach(n => n.remove());
-      const lines = [...doc.body.querySelectorAll('p,li,h1,h2,h3,h4')].map(n => n.textContent.trim()).filter(Boolean);
-      let end = '';
-      const ko = [], vi = [];
-      let target = ko;
-      lines.forEach(line => {
-        const m = line.match(/^(?:종료|마감)\s*[:：]\s*(20\d{2})[-.](\d{1,2})[-.](\d{1,2})/);
-        if (m) { end = m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0'); return; }
-        if (/^[-–—]+\s*VI\s*[-–—]+$/i.test(line)) { target = vi; return; }
-        target.push(line);
-      });
-      return { img: img && img.href, link: link && link.href, end, ko, vi };
-    };
 
     /* 교회소식 카드 */
+    const feed = document.getElementById('news-feed');
     if (feed) {
-      posts.filter(p => inCat(p, '교회소식')).slice(0, 3).forEach(post => {
-        const body = parseBody(post);
+      items.filter(x => x.kind === '소식' && x.title).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3).forEach(x => {
         const card = document.createElement('article');
         card.className = 'news-card feed';
         const meta = document.createElement('p'); meta.className = 'news-meta';
         const tag = document.createElement('span'); tag.className = 'news-tag'; tag.textContent = '교회소식'; tag.setAttribute('data-vi', 'Tin Hội Thánh');
-        const time = document.createElement('time'); const d = String(post.date || '').slice(0, 10); time.dateTime = d; time.textContent = d.replaceAll('-', '.');
+        const time = document.createElement('time'); time.dateTime = x.date; time.textContent = x.date.replaceAll('-', '.');
         meta.append(tag, time);
-        const h3 = document.createElement('h3'); h3.textContent = textOf(post.title);
+        const h3 = document.createElement('h3'); h3.textContent = x.title;
+        if (x.titleVi) h3.setAttribute('data-vi', x.titleVi);
         card.append(meta, h3);
-        const viText = body.vi.join(' ');
-        const p = document.createElement('p'); p.textContent = body.ko.join(' ').slice(0, 320);
-        if (viText) p.setAttribute('data-vi', viText.slice(0, 320));
+        const p = document.createElement('p'); p.textContent = split(x.ko).join(' ').slice(0, 320);
+        if (x.vi) p.setAttribute('data-vi', split(x.vi).join(' ').slice(0, 320));
         if (p.textContent) card.appendChild(p);
         feed.appendChild(card);
       });
       if (feed.children.length) applyLang(root.lang);
     }
 
-    /* 공지 팝업: expiry and suppression are checked per post before capping the queue. */
+    /* 공지 팝업 */
     const vnToday = new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10);
-    const popupQueue = posts.filter(p => inCat(p, '공지팝업'))
-      .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || b.ID - a.ID)
-      .map(pop => {
-        const body = parseBody(pop);
-        const postDay = String(pop.date || '').slice(0, 10);
+    const hash = s => { let h = 0; for (const ch of s) h = (h * 31 + ch.codePointAt(0)) | 0; return (h >>> 0).toString(36); };
+    const popupQueue = items.filter(x => x.kind === '팝업' && x.title)
+      .sort((a, b) => b.date.localeCompare(a.date) || b.n - a.n)
+      .map(x => {
+        const postDay = x.date || vnToday;
         const defaultEnd = new Date(new Date(postDay + 'T00:00:00Z').getTime() + 14 * 86400000);
-        const lastDay = body.end || (!Number.isNaN(defaultEnd.getTime()) ? defaultEnd.toISOString().slice(0, 10) : '');
-        const key = 'hmc-popup-' + pop.ID + '-' + String(pop.modified || '').slice(0, 19);
+        const lastDay = x.end || (!Number.isNaN(defaultEnd.getTime()) ? defaultEnd.toISOString().slice(0, 10) : '');
+        const key = 'hmc-popup-' + hash(x.title + '|' + x.date + '|' + x.end);
         if (!lastDay || vnToday > lastDay || postDay > vnToday) return null;
         try { if (localStorage.getItem(key) === vnToday || sessionStorage.getItem(key)) return null; } catch { /* storage unavailable */ }
-        return { pop, body, key };
+        return { pop: { ID: hash(x.title + x.date), title: x.title }, titleVi: x.titleVi, body: { img: x.img || '', link: x.link || '', end: x.end, ko: split(x.ko), vi: split(x.vi) }, key };
       }).filter(Boolean).slice(0, 3);
     if (!popupQueue.length) return;
     const opener = document.activeElement;
@@ -319,12 +282,12 @@
     actions.append(hideToday, close);
     box.append(inner, actions); wrap.appendChild(box); row.appendChild(wrap);
     const title = textOf(pop.title);
-    const titleVi = (title.match(/\|\s*(.+)$/) || [])[1];
+    const titleVi = next.titleVi;
     const render = () => {
       const vi = root.lang === 'vi' && body.vi.length;
       const lines = vi ? body.vi : body.ko;
       tag.textContent = vi ? 'THÔNG BÁO' : '교회 공지';
-      h2.textContent = vi && titleVi ? titleVi : title.replace(/\s*\|\s*.+$/, '');
+      h2.textContent = vi && titleVi ? titleVi : title;
       text.replaceChildren(...lines.map(l => Object.assign(document.createElement('p'), { textContent: l })));
       if (more) more.textContent = root.lang === 'vi' ? 'Xem chi tiết' : '자세히 보기';
       hideToday.textContent = root.lang === 'vi' ? 'Không hiện hôm nay' : '오늘 하루 보지 않기';
